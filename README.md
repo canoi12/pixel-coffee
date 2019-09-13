@@ -19,6 +19,6 @@ A tiny LÖVE framework to help to start and debug projects
 	- [ ] Moonscript version (?)
 
 ### Dependencies: ###
-	- love-imgui: https://github.com/slages/love-imgui
-	- lume: https://github.com/rxi/lume
-	- lurker: https://github.com/rxi/lurker
+	* love-imgui: https://github.com/slages/love-imgui
+	* lume: https://github.com/rxi/lume
+	* lurker: https://github.com/rxi/lurker
