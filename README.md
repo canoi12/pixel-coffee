@@ -16,8 +16,8 @@ A tiny LÖVE framework to help to start and debug projects
  - [ ] Metroidvania mode for scene editor
  - [ ] Simple audio player
  - [ ] Realtime debug
- - [ ] LoveTypescript version (?)
- - [ ] Moonscript version (?)
+ - [ ] -LoveTypescript version (?)-
+ - [ ] -Moonscript version (?)-
 
 ### Dependencies: ###
 
