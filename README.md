@@ -1,7 +1,7 @@
 # pixel-coffee
 A tiny LÖVE framework to help to start and debug projects
 
-## TODO: ##
+### TODO: ###
 	- [ ] Scene editor/Tilemap editor
 	- [ ] Tileset editor
 	- [ ] Animation editor
@@ -18,7 +18,7 @@ A tiny LÖVE framework to help to start and debug projects
 	- [ ] LoveTypescript version (?)
 	- [ ] Moonscript version (?)
 
-Dependencies:
+### Dependencies: ###
 	- [ ] love-imgui: https://github.com/slages/love-imgui
 	- [ ] lume: https://github.com/rxi/lume
 	- [ ] lurker: https://github.com/rxi/lurker
