@@ -1,7 +1,7 @@
 # pixel-coffee
 A tiny LÖVE framework to help to start and debug projects
 
-TODO:
+## TODO: ##
 	- [ ] Scene editor/Tilemap editor
 	- [ ] Tileset editor
 	- [ ] Animation editor
