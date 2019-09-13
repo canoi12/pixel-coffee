@@ -7,6 +7,7 @@
   "author": "Canoi Gomes <canoimaster@gmail.com>",
   "license": "MIT",
   "scripts": {
-  	"test": "love src -debug"
+  	"test": "love src -debug",
+    "run": "love src"
   }
 }

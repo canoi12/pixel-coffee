@@ -180,24 +180,7 @@
 			"file": "src/pixcof/init.lua",
 			"settings":
 			{
-				"buffer_size": 274,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/canoi/.themes/Vaporwave-old/index.theme",
-			"settings":
-			{
-				"buffer_size": 258,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/canoi/.themes/Vaporwave-new/index.theme",
-			"settings":
-			{
-				"buffer_size": 242,
+				"buffer_size": 856,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -206,16 +189,53 @@
 			"file": "src/main.lua",
 			"settings":
 			{
-				"buffer_size": 131,
+				"buffer_size": 165,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/debug.lua",
+			"settings":
+			{
+				"buffer_size": 1301,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/editors/init.lua",
+			"settings":
+			{
+				"buffer_size": 91,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/editors/editor.lua",
+			"settings":
+			{
+				"buffer_size": 256,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/game.lua",
+			"settings":
+			{
+				"buffer_size": 274,
+				"encoding": "UTF-8",
+				"line_ending": "Unix",
+				"name": "local Class = require(\"pixcof.class\")"
 			}
 		},
 		{
 			"file": "pixcof.sublime-project",
 			"settings":
 			{
-				"buffer_size": 213,
+				"buffer_size": 267,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -224,7 +244,7 @@
 			"file": "package.json",
 			"settings":
 			{
-				"buffer_size": 334,
+				"buffer_size": 357,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -408,10 +428,15 @@
 	[
 		"/home/canoi/Documentos/Projects/pixel-coffee",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src",
-		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof"
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/assets",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors"
 	],
 	"file_history":
 	[
+		"/home/canoi/.themes/Vaporwave-old/index.theme",
+		"/home/canoi/.themes/Vaporwave-new/index.theme",
+		"/home/canoi/.icons/Vaporwave-new/index.theme",
 		"/home/canoi/Documentos/Projects/Frameworks/pixel-coffee/src/assets/tilemaps/new map.lua",
 		"/home/canoi/.themes/Vaporwave-old/gtk-3.24/apps/xfce.css",
 		"/home/canoi/.themes/Vaporwave-old/gtk-3.0/apps/whiskermenu.css",
@@ -536,14 +561,11 @@
 		"/home/canoi/Documentos/Freelas/jogo nave/game/objects/powerup.lua",
 		"/home/canoi/Documentos/Freelas/jogo nave/game/conf.lua",
 		"/home/canoi/Documentos/Freelas/jogo nave/game/systems/gamemanager.lua",
-		"/home/canoi/Documentos/Freelas/jogo nave/game/main.lua",
-		"/home/canoi/Documentos/Freelas/jogo nave/game/scenes/gameScene.lua",
-		"/home/canoi/Documentos/Freelas/jogo nave/game/systems/entity.lua",
-		"/home/canoi/Documentos/Freelas/jogo nave/game/objects/ship.lua"
+		"/home/canoi/Documentos/Freelas/jogo nave/game/main.lua"
 	],
 	"find":
 	{
-		"height": 22.0
+		"height": 40.0
 	},
 	"find_in_files":
 	{
@@ -557,6 +579,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"Debug"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -564,6 +587,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"Game"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -602,7 +626,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
@@ -611,15 +635,44 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 274,
+						"buffer_size": 856,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								253,
-								253
+								395,
+								395
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/main.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 165,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								161,
+								161
 							]
 						],
 						"settings":
@@ -630,57 +683,30 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "/home/canoi/.themes/Vaporwave-old/index.theme",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 258,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "/home/canoi/.themes/Vaporwave-new/index.theme",
+					"file": "src/pixcof/debug.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 242,
+						"buffer_size": 1301,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								242,
-								242
+								330,
+								330
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -691,19 +717,19 @@
 				},
 				{
 					"buffer": 4,
-					"file": "src/main.lua",
+					"file": "src/pixcof/editors/init.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 131,
+						"buffer_size": 91,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								24,
-								24
+								73,
+								73
 							]
 						],
 						"settings":
@@ -714,29 +740,29 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
 					"buffer": 5,
-					"file": "pixcof.sublime-project",
+					"file": "src/pixcof/editors/editor.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 213,
+						"buffer_size": 256,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								67,
-								67
+								185,
+								185
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JSON.sublime-syntax"
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -747,24 +773,84 @@
 				},
 				{
 					"buffer": 6,
-					"file": "package.json",
+					"file": "src/pixcof/game.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 334,
+						"buffer_size": 274,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								334,
-								334
+								256,
+								256
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JSON.sublime-syntax"
+							"auto_name": "local Class = require(\"pixcof.class\")",
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "pixcof.sublime-project",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 267,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								256,
+								256
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "package.json",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 357,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								349,
+								349
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -827,7 +913,7 @@
 	"project": "pixcof.sublime-project",
 	"replace":
 	{
-		"height": 40.0
+		"height": 71.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -847,7 +933,7 @@
 		[
 			[
 				"",
-				"~/Documentos/Projects/pixel-coffee/pixel-coffee.sublime-project"
+				"~/Documentos/Projects/Frameworks/pixel-coffee/pixcof.sublime-project"
 			]
 		],
 		"width": 380.0
