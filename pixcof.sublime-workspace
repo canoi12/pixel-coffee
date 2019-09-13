@@ -1,0 +1,693 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"sce",
+				"scenemanager\tscript"
+			],
+			[
+				"ImGui",
+				"ImGuiWindowFlags_NoMove"
+			],
+			[
+				"minit",
+				"minimal4.ttf"
+			],
+			[
+				"global",
+				"globalKeyEntry"
+			],
+			[
+				"ke",
+				"love.keyboard.isDown"
+			],
+			[
+				"for",
+				"for\tfor i=1,10"
+			],
+			[
+				"time",
+				"timeAndAngle"
+			],
+			[
+				"proje",
+				"projectileTimesAndAngles"
+			],
+			[
+				"fl",
+				"float3\tcontext"
+			],
+			[
+				"dea",
+				"delay"
+			],
+			[
+				"ch",
+				"charging"
+			],
+			[
+				"cha",
+				"charginTimer"
+			],
+			[
+				"power",
+				"powerMultiplier"
+			],
+			[
+				"v",
+				"Vector3"
+			],
+			[
+				"targ",
+				"targetRoom"
+			],
+			[
+				"in",
+				"interpolationFactor"
+			],
+			[
+				"floa",
+				"float4\tcontext"
+			],
+			[
+				"icew",
+				"iceWaitLoop"
+			],
+			[
+				"Aim",
+				"Anim"
+			],
+			[
+				"fire",
+				"fireball"
+			],
+			[
+				"red",
+				"ready_to_enter"
+			],
+			[
+				"Star",
+				"StartCoroutine"
+			],
+			[
+				"mission",
+				"mission_update"
+			],
+			[
+				"doc",
+				"docked"
+			],
+			[
+				"fun",
+				"function\tfunction"
+			],
+			[
+				"func",
+				"function\tfunction"
+			],
+			[
+				"Idle",
+				"idleB"
+			],
+			[
+				"opt",
+				"options"
+			],
+			[
+				"bade",
+				"badelineBoss"
+			],
+			[
+				"lo",
+				"love"
+			],
+			[
+				"pl",
+				"playery"
+			],
+			[
+				"id",
+				"idle"
+			],
+			[
+				"th",
+				"throw"
+			],
+			[
+				"run",
+				"runSlow"
+			],
+			[
+				"idl",
+				"idle_carry"
+			],
+			[
+				"sp",
+				"speedy"
+			],
+			[
+				"scro",
+				"scrolly"
+			],
+			[
+				"class",
+				"class\tclass name extends..."
+			],
+			[
+				"actors",
+				"actors_to_add"
+			],
+			[
+				"goto",
+				"goto"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "src/pixcof/class.lua",
+			"settings":
+			{
+				"buffer_size": 353,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/init.lua",
+			"settings":
+			{
+				"buffer_size": 78,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/Moonscripty/Moonscript.sublime-build",
+					""
+				],
+				[
+					"Packages/Moonscripty/Moonscript.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/Moonscripty/Moonscript.sublime-build",
+					"moonc: show output"
+				],
+				[
+					"Packages/Moonscripty/Moonscript.sublime-build",
+					"love: run project"
+				],
+				[
+					"Packages/Moonscripty/Moonscript.sublime-build",
+					"love: run file"
+				],
+				[
+					"Packages/Moonscripty/Moonscript.sublime-build",
+					"moonc: compile project"
+				],
+				[
+					"Packages/Moonscripty/Moonscript.sublime-build",
+					"moonc: run lint on file"
+				],
+				[
+					"Packages/Moonscripty/Moonscript.sublime-build",
+					"moonc: run lint on project"
+				],
+				[
+					"Packages/Moonscripty/Moonscript.sublime-build",
+					"ldoc: File"
+				],
+				[
+					"Packages/Moonscripty/Moonscript.sublime-build",
+					"ldoc: Project"
+				]
+			],
+			[
+				"Packages/Moonscripty/Moonscript.sublime-build",
+				"love: run project"
+			]
+		],
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"scheme",
+				"UI: Select Color Scheme"
+			],
+			[
+				"sche",
+				"UI: Select Color Scheme"
+			],
+			[
+				"luacom",
+				"LuaComplete: Enable"
+			],
+			[
+				"rem",
+				"Package Control: Remove Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"package",
+				"Package Control: Remove Package"
+			],
+			[
+				"luaclm",
+				"LuaComplete: Clear Auto-complete Cache (Restart Server)"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"schm",
+				"UI: Select Color Scheme"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"schem",
+				"UI: Select Color Scheme"
+			],
+			[
+				"add",
+				"Package Control: Add Repository"
+			],
+			[
+				"menu",
+				"View: Toggle Menu"
+			],
+			[
+				"toggle ",
+				"View: Toggle Menu"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"remove p",
+				"Package Control: Remove Package"
+			],
+			[
+				"pack",
+				"Install Package Control"
+			]
+		],
+		"width": 444.0
+	},
+	"console":
+	{
+		"height": 146.0,
+		"history":
+		[
+			"love /home/canoi/Documentos/Freelas/puzzle\\ game/game",
+			"love",
+			"love game/",
+			"moonc -t game/. src/.",
+			"2+2",
+			"print(\"hey\")",
+			"print \"hey\"",
+			"moon"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/canoi/Documentos/Projects/pixel-coffee",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof"
+	],
+	"file_history":
+	[
+		"/home/canoi/Documentos/Projects/Frameworks/pixel-coffee/src/assets/tilemaps/new map.lua",
+		"/home/canoi/.themes/Vaporwave-old/gtk-3.24/apps/xfce.css",
+		"/home/canoi/.themes/Vaporwave-old/gtk-3.0/apps/whiskermenu.css",
+		"/home/canoi/.themes/Vaporwave-old/gtk-3.0/apps/xfce.css",
+		"/home/canoi/.themes/Vaporwave-old/gtk-3.24/gtk.css",
+		"/home/canoi/.themes/Vaporwave-old/gtk-3.24/gtk-widgets.css",
+		"/home/canoi/.themes/Vaporwave-new/gtk-3.0/gtk.css",
+		"/home/canoi/.themes/Vaporwave-new/gtk-3.24/gtk.css",
+		"/home/canoi/.themes/Windows-95/gtk-3.0/gtk.css",
+		"/home/canoi/.themes/Vaporwave-old/gtk-3.0/gtk-widgets.css",
+		"/home/canoi/Documentos/Projects/Frameworks/pixel-coffee/src/editors/tileset.lua",
+		"/home/canoi/bin/paletteswap",
+		"/home/canoi/.themes/Arne/cinnamon/cinnamon.css",
+		"/home/canoi/Documentos/Projects/Frameworks/pixel-coffee/package.json",
+		"/home/canoi/Documentos/Projects/Frameworks/pixel-coffee/pixcof.sublime-project",
+		"/home/canoi/LoveTS/typings/imgui.d.ts",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors/scenes.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets/tilesets/teste.lua",
+		"/home/canoi/index.html",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets/tilesets/forest.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/teste",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors/tilemap.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets/tilesets/forest.bin",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets/animations/plauer.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/debug.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors/resources.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors/editor.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/init.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/objects/player.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors/init.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/main.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/objects/boto.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/scenes/menuscene.lua",
+		"/home/canoi/.config/sublime-text-3/Packages/User/LuaComplete.sublime-settings",
+		"/home/canoi/.config/sublime-text-3/Packages/LuaComplete/LuaComplete.sublime-settings",
+		"/home/canoi/Documentos/Projects/pixel-coffee/pixel-coffee.sublime-project",
+		"/home/canoi/Documentos/Projects/pixel-coffee/package.json",
+		"/home/canoi/Documentos/Projects/love-typescript-template/game/pixcof/debug.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/entity.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/scenemanager.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/scene.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/resources.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/scenes/gamescene.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/game.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/objects/enemy.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/conf.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/class.lua",
+		"/home/canoi/Documentos/Projects/love-typescript-template/typings/imgui.d.ts",
+		"/home/canoi/Documentos/Projects/pixel-coffee/main.lua",
+		"/home/canoi/Documentos/Projects/love-typescript-template/src/resources.ts",
+		"/home/canoi/Documentos/Projects/love-typescript-template/src/systems/scene.ts",
+		"/home/canoi/Documentos/Projects/love-typescript-template/src/systems/scenemanager.ts",
+		"/home/canoi/Documentos/Projects/love-typescript-template/src/objects/entity.ts",
+		"/home/canoi/Documentos/Projects/love-typescript-template/src/main.ts",
+		"/home/canoi/Documentos/Projects/love-typescript-template/game/conf.lua",
+		"/home/canoi/Documentos/Projects/love-typescript-template/game/main.lua",
+		"/home/canoi/Documentos/Projects/love-typescript-template/node_modules/lurker/lurker.lua",
+		"/home/canoi/Documentos/Projects/love-typescript-template/game/systems/scene.lua",
+		"/home/canoi/LoveTS/src/libs.ts",
+		"/home/canoi/gift_v04/main.lua",
+		"/home/canoi/Documentos/Projects/love-typescript-template/node_modules/love-typescript-definitions/typings/types/LightUserData.d.ts",
+		"/home/canoi/Documentos/Projects/love-typescript-template/node_modules/love-typescript-definitions/typings/types/index.d.ts",
+		"/home/canoi/LoveTS/game/objects/test.json",
+		"/home/canoi/LoveTS/src/objects/test.json",
+		"/home/canoi/LoveTS/game/objects/player.lua",
+		"/home/canoi/TestTSToLua/typings/lume.d.ts",
+		"/home/canoi/LoveTS/game/libs.lua",
+		"/home/canoi/LoveTS/package.json",
+		"/home/canoi/LoveTS/tsconfig.json",
+		"/home/canoi/LoveTS/src/main.ts",
+		"/home/canoi/LoveTS/node_modules/tstl-lurker/index.d.ts",
+		"/home/canoi/LoveTS/src/systems/scenemanager.ts",
+		"/home/canoi/LoveTS/src/systems/scene.ts",
+		"/home/canoi/LoveTS/src/scenes/testscene.ts",
+		"/home/canoi/TestTSToLua/src/main.ts",
+		"/home/canoi/LoveTS/src/conf.ts",
+		"/home/canoi/LoveTS/typings/lume.d.ts",
+		"/home/canoi/TestTSToLua/src/conf.ts",
+		"/home/canoi/Documentos/Projects/love2d/TestImGui/main.lua",
+		"/home/canoi/maximus/config",
+		"/home/canoi/maximus/configure",
+		"/home/canoi/NewKnightvania/Assets/testemenor.lua",
+		"/home/canoi/Documentos/Freelas/puzzle game/game/engine.lua",
+		"/home/canoi/Documentos/Freelas/puzzle game/puzzle_game.sublime-project",
+		"/home/canoi/NewKnightvania/Assets/levelteste.tmx",
+		"/home/canoi/Documentos/Freelas/puzzle game/game/lib/suit/theme.lua",
+		"/home/canoi/Documentos/Freelas/puzzle game/game/main.lua",
+		"/home/canoi/Documentos/Freelas/puzzle game/src/scenes/menuscene.moon",
+		"/home/canoi/Documentos/Freelas/puzzle game/game/objects/puzzle.lua",
+		"/home/canoi/Documentos/Freelas/puzzle game/src/objects/puzzle.moon",
+		"/home/canoi/Documentos/Freelas/puzzle game/src/objects/button.moon",
+		"/home/canoi/Documentos/Freelas/puzzle game/game/scenes/configscene.lua",
+		"/home/canoi/Documentos/Freelas/puzzle game/src/scenes/configscene.moon",
+		"/home/canoi/Documentos/Freelas/puzzle game/src/main.moon",
+		"/home/canoi/Documentos/Freelas/puzzle game/game/settings.lua",
+		"/home/canoi/Documentos/Freelas/puzzle game/build/game.love",
+		"/home/canoi/Documentos/Freelas/puzzle game/src/systems/resources.moon",
+		"/home/canoi/Documentos/Freelas/puzzle game/game/systems/resources.lua",
+		"/home/canoi/Documentos/Freelas/puzzle game/build/settings.lua",
+		"/home/canoi/Documentos/Freelas/puzzle game/game/scenes/gamescene.lua",
+		"/home/canoi/Documentos/Freelas/puzzle game/src/systems/scenemanager.moon",
+		"/home/canoi/Documentos/Freelas/puzzle game/src/scenes/gamescene.moon",
+		"/home/canoi/Documentos/Freelas/puzzle game/game/scenes/scene.lua",
+		"/home/canoi/Documentos/Freelas/puzzle game/src/conf.moon",
+		"/home/canoi/Documentos/Freelas/puzzle game/src/engine.moon",
+		"/home/canoi/Documentos/Freelas/puzzle game/build/README.md",
+		"/home/canoi/Documentos/Freelas/puzzle game/src/settings.moon",
+		"/home/canoi/Documentos/Freelas/puzzle game/src/scenes/scene.moon",
+		"/home/canoi/Documentos/Freelas/puzzle game/game/lib/suit/core.lua",
+		"/home/canoi/Documentos/Freelas/puzzle game/src/objects/checkbutton.moon",
+		"/home/canoi/Documentos/Freelas/puzzle game/game/objects/button.lua",
+		"/home/canoi/.cache/.fr-ueSGAz/GitHub.tmTheme",
+		"/home/canoi/.config/sublime-text-3/Github Color Theme.sublime-package_FILES/GitHub.tmTheme",
+		"/home/canoi/Documentos/Freelas/puzzle game/game/lib/lume.lua",
+		"/home/canoi/Documentos/Freelas/puzzle game/src/system/scenemanager.moon",
+		"/home/canoi/Documentos/Freelas/puzzle game/src/scene/scene.moon",
+		"/home/canoi/Documentos/gamedev/moonscript engine/game/main.lua",
+		"/home/canoi/Documentos/gamedev/moonscript engine/game/resources.lua",
+		"/home/canoi/Documentos/gamedev/moonscript engine/scenes/scene.moon",
+		"/home/canoi/Documentos/gamedev/moonscript engine/resources.moon",
+		"/home/canoi/Documentos/gamedev/moonscript engine/main.moon",
+		"/home/canoi/Documentos/Freelas/jogo nave/game/objects/powerup.lua",
+		"/home/canoi/Documentos/Freelas/jogo nave/game/conf.lua",
+		"/home/canoi/Documentos/Freelas/jogo nave/game/systems/gamemanager.lua",
+		"/home/canoi/Documentos/Freelas/jogo nave/game/main.lua",
+		"/home/canoi/Documentos/Freelas/jogo nave/game/scenes/gameScene.lua",
+		"/home/canoi/Documentos/Freelas/jogo nave/game/systems/entity.lua",
+		"/home/canoi/Documentos/Freelas/jogo nave/game/objects/ship.lua"
+	],
+	"find":
+	{
+		"height": 22.0
+	},
+	"find_in_files":
+	{
+		"height": 104.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "src/pixcof/class.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 353,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								353,
+								353
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/pixcof/init.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 78,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								59,
+								59
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 22.0
+	},
+	"input":
+	{
+		"height": 40.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.doc":
+	{
+		"height": 0.0
+	},
+	"output.exec":
+	{
+		"height": 237.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.mdpopups":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Debug",
+	"project": "pixcof.sublime-project",
+	"replace":
+	{
+		"height": 40.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/Documentos/Projects/pixel-coffee/pixel-coffee.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 224.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

@@ -1,0 +1,12 @@
+{
+  "name": "pixel-coffee",
+  "version": "0.0.1",
+  "description": "A tiny LÖVE framework to help to start and debug projects",
+  "main": "index.js",
+  "repository": "https://github.com/canoi12/pixel-coffee.git",
+  "author": "Canoi Gomes <canoimaster@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+  	"test": "love src -debug"
+  }
+}
