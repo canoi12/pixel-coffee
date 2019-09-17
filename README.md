@@ -3,19 +3,19 @@ A tiny LÖVE framework to help to start and debug projects
 
 ### TODO: ###
 
- - [-] Scene editor/Tilemap editor
+ - [ ] Scene editor/Tilemap editor
  - [x] Tileset editor
  - [x] Animation editor
  - [x] Resources viewer
  - [ ] Log
  - [ ] Console
- - [-] Debug
- - [-] Resources manager
+ - [ ] Debug
+ - [ ] Resources manager
  - [x] Scene manager
  - [ ] Pre made shaders
  - [ ] Metroidvania mode for scene editor
  - [ ] Simple audio player
- - [-] Realtime debug
+ - [ ] Realtime debug
  - [ ] ~~LoveTypescript version (?)~~
  - [ ] ~~Moonscript version (?)~~
 
