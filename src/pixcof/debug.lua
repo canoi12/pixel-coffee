@@ -1,12 +1,15 @@
 local Class = require("pixcof.class")
 local Debug = Class:extends("Debug")
 local Editors = require("pixcof.editors")
+local SceneManager = require("pixcof.scenemanager")
 
 function Debug:constructor()
 	self.log = ""
 	self.bgimage = love.graphics.newImage("pixcof/assets/images/bg.jpg")
 	self.bgimage:setFilter("nearest", "nearest")
 	self.bgimage:setWrap("repeat", "repeat")
+
+	--SceneManager:init()
 
 	self.editors = {
 		scene = Editors.SceneEditor:new(self),
@@ -19,6 +22,11 @@ end
 function Debug:update(dt)
 	imgui.NewFrame()
 	imgui.StyleColorsDark()
+	--SceneManager:update(dt)
+	local editors_open = lume.filter(self.editors, function(x) return x.open end)
+	for k,editor in pairs(editors_open) do
+		editor:update(dt)
+	end
 end
 
 function Debug:beginDraw()
@@ -60,6 +68,9 @@ function Debug:draw()
 	for k,editor in pairs(editors_open) do
 		editor:draw()
 	end
+
+	--SceneManager:draw()
+
 	self:endDraw()
 end
 
@@ -72,10 +83,12 @@ function Debug:initImGui()
 
  	love.keypressed = function(key)
 	    imgui.KeyPressed(key)
+	    anykeydown = true
 	end
 
 	love.keyreleased = function(key)
 	    imgui.KeyReleased(key)
+	    anykeydown = false
 	end
 
 	love.mousemoved = function(x, y)
@@ -92,6 +105,7 @@ function Debug:initImGui()
 
 	love.wheelmoved = function(x, y)
 	    imgui.WheelMoved(y)
+	    self.editors.scene:wheelmoved(x, y)
 	end
 	self:Log("ImGui started <3")
 end

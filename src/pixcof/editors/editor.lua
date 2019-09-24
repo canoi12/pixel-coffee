@@ -6,6 +6,9 @@ function Editor:constructor(debug)
 	self.debug = debug or {}
 end
 
+function Editor:update(dt)
+end
+
 function Editor:draw()
 	if imgui.Begin(self.name) then 
 		imgui.End()

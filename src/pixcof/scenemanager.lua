@@ -6,9 +6,15 @@ SceneManager.currentScene = nil
 function SceneManager:init()
 end
 
-function SceneManager:createEntity(x, y, entity)
+function SceneManager:spawn(x, y, entity)
 	if self.currentScene then
-		self.currentScene:createEntity(x, y, entity)
+		self.currentScene:spawn(x, y, entity)
+	end
+end
+
+function SceneManager:destroy(entity)
+	if self.currentScene then
+		self.currentScene:destroy(entity)
 	end
 end
 
@@ -22,8 +28,8 @@ function SceneManager:getCurrent()
 end
 
 function SceneManager:getEntities()
-	if  not self.currentScene then
-		return nil
+	if not self.currentScene then
+		return {}
 	end
 	return self.currentScene.entities
 end

@@ -13,7 +13,7 @@ function Animation:constructor(name, speed)
 	self.frame = 1
 	self.speed = 1
 	self.initial_speed = speed or 1
-	self.current_animation = ""
+	self.currentAnimation = ""
 
 	self.animations = {}
 	for i,anim in ipairs(self.anim.animations) do
@@ -53,8 +53,9 @@ function Animation:update(dt)
 		self.speed = 1
 		self.frame = self.frame + 1
 	end
-	if self.frame > self.animations[self.current_animation].end_frame then
-		self.frame = self.animations[self.current_animation].start_frame
+	
+	if self.frame > self.animations[self.currentAnimation].end_frame then
+		self.frame = self.animations[self.currentAnimation].start_frame
 	end
 end
 

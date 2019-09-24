@@ -19,15 +19,14 @@ function Tilemap:constructor(name, tileset, width, height)
 	self.image = Resources:getImage(self.tileset.image)
 	self.width = self.base.width or width or 16
 	self.height = self.base.height or height or 16
-	self.layers = self.base.layers or {}
+	self.layers = {}
+	--self.layers = self.base.layers or {}
 
-	self.entities = self.base.entities or {}
+	--self.entities = self.base.entities or {}
 
-	for i,layer in ipairs(self.layers) do
-		if layer.type:lower() == "tile" and self.image then
-			layer.batch = love.graphics.newSpriteBatch(self.image, self.width * self.height)
-		end
-	end
+	--[[for i,layer in ipairs(self.layers) do
+		
+	end]]
 	self.quads = {}
 
 	self.camera = {
@@ -35,10 +34,10 @@ function Tilemap:constructor(name, tileset, width, height)
 		y = 0
 	}
 
+
+	self:loadLayers()
 	self:resize()
-
 	self:loadQuads()
-
 	self:pushTiles()
 end
 
@@ -46,6 +45,27 @@ function Tilemap:load(name)
 	local o = setmetatable({}, { __index  = self })
 	o:constructor(name)
 	return o
+end
+
+function Tilemap:loadLayers()
+	local layers = self.base.layers or {}
+	for i,layer in ipairs(layers) do
+		local llayer = self:addLayer(layer.name, layer.type)
+		--print(llayer.name)
+		self:loadLayer(llayer, layer)
+	end
+end
+
+function Tilemap:loadLayer(layer, baselayer)
+	if baselayer.type == "Entity" then
+		for j,entity in ipairs(baselayer.entities) do
+			self:addEntity(entity.x, entity.y, Resources.objects[entity.type]:new(), layer.name)
+			--print("uau", Resources.objects[entity.type].name)
+		end
+	elseif baselayer.type == "Tile" then
+		layer.tiles = baselayer.tiles
+		layer.batch = love.graphics.newSpriteBatch(self.image, self.width * self.height)
+	end
 end
 
 function Tilemap:pushTiles()
@@ -86,8 +106,11 @@ function Tilemap:pushTiles()
 	end
 end
 
-function Tilemap:getEntities()
-	return self.entities
+function Tilemap:getEntities(layer)
+	if type(layer) == "string" then 
+		return lume.match(self.layers, function(x) return x.name == layer end).entities or {}
+	end
+	--return self.entities
 end
 
 function Tilemap:loadQuads()
@@ -120,57 +143,57 @@ function Tilemap:autoTile(x, y, layer, autotile_type)
 	local top, left, right, bottom = false, false, false, false
 	
 	-- top
-	if map.tiles[y] and map.tiles[y][x+1] ~= -1 and map.tiles[y][x+1] ~= nil then
+	if not map.tiles[y] or (map.tiles[y] and map.tiles[y][x+1] ~= -1) then
 		sum = sum + 2
 		top = true
 	end
 
 	-- left
-	if map.tiles[y+1] and map.tiles[y+1][x] ~= -1 and map.tiles[y+1][x] ~= nil then
+	if map.tiles[y+1] and map.tiles[y+1][x] ~= -1 then
 		sum = sum + 8
 		left = true
 	end
 
 	-- center
-	if map.tiles[y+1] and map.tiles[y+1][x+1] ~= -1 and map.tiles[y+1][x+1] ~= nil then
+	if map.tiles[y+1] and map.tiles[y+1][x+1] ~= -1 then
 		sum = sum + 0
 	end
 
 	-- right
-	if map.tiles[y+1] and map.tiles[y+1][x+2] ~= -1 and map.tiles[y+1][x+2] ~= nil then
+	if map.tiles[y+1] and map.tiles[y+1][x+2] ~= -1 then
 		sum = sum + 16
 		right = true
 	end
 
 	-- bottom
-	if map.tiles[y+2] and map.tiles[y+2][x+1] ~= -1 and map.tiles[y+2][x+1] ~= nil then
+	if not map.tiles[y+2] or (map.tiles[y+2] and map.tiles[y+2][x+1] ~= -1) then
 		sum = sum + 64
 		bottom = true
 	end
 
 	-- top-left
-	if map.tiles[y] and map.tiles[y][x] ~= -1 and map.tiles[y][x] ~= nil then
+	if not map.tiles[y] or (map.tiles[y] and map.tiles[y][x] ~= -1) then
 		if top and left then
 			sum = sum + 1
 		end
 	end
 
 	-- top-right
-	if map.tiles[y] and map.tiles[y][x+2] ~= -1 and map.tiles[y][x+2] ~= nil then
+	if not map.tiles[y] or (map.tiles[y] and map.tiles[y][x+2] ~= -1) then
 		if top and right then
 			sum = sum + 4
 		end
 	end
 
 	-- bottom-left
-	if map.tiles[y+2] and map.tiles[y+2][x] ~= -1 and map.tiles[y+2][x] ~= nil then
+	if not map.tiles[y+2] or (map.tiles[y+2] and map.tiles[y+2][x] ~= -1) then
 		if bottom and left then
 			sum = sum + 32
 		end
 	end
 
 	-- bottom-right
-	if map.tiles[y+2] and map.tiles[y+2][x+2] ~= -1 and map.tiles[y+2][x+2] ~= nil then
+	if not map.tiles[y+2] or (map.tiles[y+2] and map.tiles[y+2][x+2] ~= -1) then
 		if bottom and right then
 			sum = sum + 128
 		end
@@ -245,7 +268,7 @@ function Tilemap:insertTile(x, y, index, layer, autotile, autotile_type)
 	local index = index or 1
 	autotile_type = autotile_type or 1
 	local x, y = x or 0, y or 0
-	if map.type:lower() == "entity" then return end
+	if not map or map.type:lower() == "entity" then return end
 	--x = lume.clamp(x, 0, (self.width-1)*self.tileset.tilew*2)
 	--y = lume.clamp(y, 0, (self.height-1)*self.tileset.tileh*2)
 	nx = math.floor(x/(self.tileset.tilew))
@@ -274,6 +297,7 @@ function Tilemap:removeTile(x, y, layer, autotile, autotile_type)
 	local index = index or 1
 	local layer = layer or 1
 	local map = self.layers[layer]
+	if map.type == "Entity" then return end
 	autotile_type = autotile_type or 1
 	local x, y = x or 0, y or 0
 
@@ -325,7 +349,7 @@ function Tilemap:getObjectsInTile(x, y, entities)
 	return nil
 end
 
-function Tilemap:addLayer(name, type)
+function Tilemap:addLayer(name, type, parallax, speed, wrap)
 	layer = {}
 	layer.name = name or "Layer"
 	--local names = lume.filter(self.layers, function(x) print(x.name) return x.name == name end)
@@ -340,6 +364,7 @@ function Tilemap:addLayer(name, type)
 		layer.name = name .. " (" .. #names .. ")"
 	end]]
 	layer.type = type or "Tile"
+	layer.active = true
 	layer.parallax_x = 0
 	layer.parallax_y = 0
 	layer.speed_x = 0
@@ -356,20 +381,53 @@ function Tilemap:addLayer(name, type)
 	lume.push(self.layers, layer)
 	--print(self.layers[1].name)
 	self:resize()
+	return layer
 end
 
 function Tilemap:removeLayer(layer)
-	if type(layer) == "string" then
+	local retlayer = self:getLayer(layer)
+	lume.remove(self.layers, retlayer)
+	return retlayer
+	--[[if type(layer) == "string" then
 		local rlayer = lume.filter(self.layers, function(x) return x.name == layer end)
 		lume.remove(self.layers, rlayer)
+		return rlayer
 	elseif type(layer) == "number" then
+		local rlayer = self.layers[layer]
 		table.remove(self.layers, layer)
+		return rlayer
+	end]]
+end
+
+function Tilemap:addEntity(x, y, entity, layer)
+	local lyr = lume.match(self.layers, function(la) return la.type == "Entity" end) or {}
+	if layer then
+		local lyr = self:getLayer(layer)
+		if lyr.type ~= "Entity" then return end
 	end
 
+	entity.x = x
+	entity.y = y
+
+	lume.push(lyr.entities, entity)
+
+	return entity
+end
+
+function Tilemap:removeEntity(entity)
+	for i,layer in ipairs(self.layers) do
+		if layer.type == "Entity" then lume.remove(layer.entities, entity) end
+	end
+
+	return entity
 end
 
 function Tilemap:update(dt)
-
+	for i,layer in ipairs(self.layers) do
+		if layer.type == "Entity" then
+			lume.each(layer.entities, "update", dt)
+		end
+	end
 end
 
 function Tilemap:setCameraPos(x, y)
@@ -377,39 +435,59 @@ function Tilemap:setCameraPos(x, y)
 	self.camera.y = y or 0
 end
 
+function Tilemap:editMap(name, tileset, width, height)
+	self.name = name
+	self.tileset = Resources:getTileset(tileset)
+	self:resize(width, height)
+end
+
+function Tilemap:getLayer(layer)
+	if type(layer) == "string" then
+		local layer = lume.match(self.layers, function(lyr) return lyr.name == layer end)
+		return layer or {}
+	elseif type(layer) == "number" then
+		return self.layers[layer] or {}
+	end
+end
+
+function Tilemap:drawLayer(layer)
+	if not layer.active then return end
+	if layer.type:lower() == "tile" then
+		love.graphics.draw(layer.batch, 0, 0)
+	elseif layer.type:lower() == "entity" then
+		lume.each(layer.entities, "draw")
+		lume.each(layer.entities, "debug")
+	end
+end
+
 function Tilemap:draw()
-	--[[for yy=1,self.height do
-		local tabl = self.map[yy]
-		for xx=1,self.width do
-			local value = -1
-			if self.map[yy] then
-				value = self.map[yy][xx]
-			else 
-				break
-			end
-			love.graphics.setColor(1, 1, 1, 0.4)
-			love.graphics.rectangle("line", (xx-1)*self.tileset.tilew, (yy-1)*self.tileset.tileh, self.tileset.tilew, self.tileset.tileh)
-			love.graphics.setColor(1, 1, 1, 1)
-			if value ~= -1 and value < 256 then
-				love.graphics.draw(self.image, self.quads[value], (xx-1)*self.tileset.tilew, (yy-1)*self.tileset.tileh)
-			end
-		end
-	end]]
-	--[[for yy=1,self.height do
-		local tabl = self.map[yy]
-		for xx=1,self.width do
-			love.graphics.setColor(1, 1, 1, 0.4)
-			love.graphics.rectangle("line", (xx-1)*self.tileset.tilew, (yy-1)*self.tileset.tileh, self.tileset.tilew, self.tileset.tileh)
-			love.graphics.setColor(1, 1, 1, 1)
-		end
-	end]]
 	for i,layer in ipairs(self.layers) do
 		--print(layer.type)
 		if layer.type:lower() == "tile" then
 			love.graphics.draw(layer.batch, 0, 0)
+		elseif layer.type:lower() == "entity" then
+			lume.each(layer.entities, "draw")
 		end
 	end
-	
+end
+
+function Tilemap:toTable()
+	local tilemap = {}
+	tilemap.name = self.name
+	tilemap.width = self.width
+	tilemap.height = self.height
+	tilemap.layers = {}
+	for i,layer in ipairs(self.layers) do
+		tilemap.layers[i] = self:layerToTable(layer)
+	end
+end
+
+function Tilemap:layerToTable(layer)
+	local rlayer = {}
+	--for k,attr in ipairs()
+	if layer.type == "Entity" then
+
+	end
 end
 
 return Tilemap

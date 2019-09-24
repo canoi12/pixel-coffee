@@ -2,12 +2,15 @@ local Editor = require "pixcof.editors.editor"
 local resources = require("pixcof.resources")
 local ResourcesViewer = Editor:extends("ResourcesViewer")
 
-function ResourcesViewer:constructor()
-	Editor.constructor(self)
+function ResourcesViewer:constructor(debug)
+	Editor.constructor(self, debug)
 	self.open = false
 	self.currentImage = nil
 	self.currentFont = nil
 	self.currentAudio = nil
+	self.currentObject = nil
+	self.currentTileset = nil
+	self.currentMap = nil
 	self.assetType = nil
 	self.imageScale = 1
 	self.initColumns = false
@@ -64,8 +67,11 @@ function ResourcesViewer:draw()
 			imgui.BeginChild("ResourcesViewer", 0, 0, false, "ImGuiWindowFlags_HorizontalScrollbar")
 			
 			self:imageMenu()
+			self:tilesetMenu()
 			self:fontMenu()
 			self:audioMenu()
+			self:objectMenu()
+			self:mapMenu()
 
 			imgui.EndChild()
 		end
@@ -109,11 +115,35 @@ end
 function ResourcesViewer:fontMenu()
 	if imgui.TreeNodeEx("Fonts") then
 		for k,font in pairs(resources.fonts) do
-			if imgui.Selectable(k) then
+			if imgui.Selectable(k, font == self.currentFont and self.assetType == "font = love.graphics.getFont()") then
 				self.assetType = "font"
 				self.currentFont = font
 			end
 		end
+		imgui.TreePop()
+	end
+end
+
+function ResourcesViewer:objectMenu()
+	if imgui.TreeNodeEx("Objects") then
+		for k,object in pairs(resources.objects) do
+			if imgui.Selectable(k) then end
+		end
+		imgui.TreePop()
+	end
+end
+
+function ResourcesViewer:tilesetMenu()
+	if imgui.TreeNodeEx("Tilesets") then
+		for k,tileset in pairs(resources.tilesets) do
+			if imgui.Selectable(k) then end
+		end
+		imgui.TreePop()
+	end
+end
+
+function ResourcesViewer:mapMenu()
+	if imgui.TreeNodeEx("Maps") then
 		imgui.TreePop()
 	end
 end

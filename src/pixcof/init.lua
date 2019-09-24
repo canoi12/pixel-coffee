@@ -3,6 +3,7 @@ require "imgui"
 lume = require("pixcof.libs.lume")
 lurker = require("pixcof.libs.lurker")
 local __pixcof = {}
+anykeydown = falses
 
 __pixcof.Class = require("pixcof.class")
 __pixcof.Debug = require("pixcof.debug")
