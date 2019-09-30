@@ -3,13 +3,13 @@ local Resources = require("pixcof.resources")
 local lume = require("pixcof.libs.lume")
 
 --local Debug = require("pixcof.debug")
-local Tilemap = Class:extends("Tilemap")
+local Tilemap = Class:extend("Tilemap")
 Tilemap.__constructors = {"load"}
 
 local autotileref = {1,2,4,8,0,16,32,64,128}
 
 function Tilemap:constructor(name, tileset, width, height)
-	print(tileset)
+	--print(tileset)
 	self.base = Resources:getTilemap(name) or {}
 
 	self.name = name or "test"

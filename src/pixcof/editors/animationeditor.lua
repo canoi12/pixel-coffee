@@ -1,150 +1,105 @@
 local Editor = require("pixcof.editors.editor")
 local Resources = require("pixcof.resources")
-local lume = require("pixcof.libs.lume")
---local bitser = require("pixcof.libs.bitser")
-local AnimationEditor = Editor:extends("AnimationEditor")
+local AnimationEditor = Editor:extend("AnimationEditor")
 
-function AnimationEditor:constructor()
-    Editor.constructor(self)
-    self.open = false
+function AnimationEditor:constructor(debug, name, animation)
+	Editor.constructor(debug)
+	self.asset = {
+		name = name,
+		animation = animation
+	}
+	self.image = Resources:getImage(self.asset.animation.image)
+	self.open = true
 
-	self.animationSetViewerProps = {
-		frameName = "",
-		image = nil,
-		image_scale = 1,
-		image_width = 0,
-		image_height = 0,
+	self.editAnimation = {
+		framename = "",
+		imagescale = 1,
 		quads = {}
 	}
-	
-	self.animationSet = Resources.animations
-	self.currentAnimationSet = nil
-
-	self.editAnimationSet = {
-		current = "",
-		new = "",
-		edit = false,
-		imgindex = 1,
-		image = ""
-	}
-
 
 	self.currentAnimation = {
-		cspeed = 1,
-		speed = 1,
-		frame = 0,
-		image = "",
 		playing = false,
+		image = Resources:getImage(self.asset.animation.image),
 		name = "",
 		stframe = 0,
-		enframe = 0
+		enframe = 0,
+		speed = 4,
+		cspeed = 0
 	}
-
-	self.frameName = ""
-	self.imageScale = 1
-	self.firstOpen = true
-
-	self.newAnim = {
-		name = "",
-		imgindex = 1,
-		image = ""
-	}
-
-	self.currentFrame = {}
 end
 
---function AnimationEditor:
-
-function AnimationEditor:createNewSet()
-	local w = imgui.GetWindowWidth()
-	if imgui.Button("Add") then
-		if self.animationSet[self.newAnim.name] == nil then
-			self.animationSet[self.newAnim.name] = {
-				image = self.newAnim.image,
-				tilew = 32,
-				tileh = 32,
-				animations = {},
-				quads = {}
-			}
-			self.newAnim.name = ""
-			self.newAnim.image = ""
-		end
-	end
-	imgui.SameLine()
-	if imgui.Button("Save") then
-		self:save()
-	end
-	imgui.SameLine()
-	imgui.PushItemWidth(-w/2)
-	self.newAnim.name = imgui.InputText("##anim_name", self.newAnim.name, 32)
-	imgui.SameLine()
-	imgui.PushItemWidth(-w/4)
+function AnimationEditor:drawAnimationInfo()
+	if imgui.SmallButton("save") then self:saveAnimation() end
+	self.asset.animation.name = imgui.InputText("name##animation_" .. self.asset.name .. "_name", self.asset.animation.name or "", 50)
+	self.asset.animation.tilew, self.asset.animation.tileh = imgui.DragInt2("size##animation_" .. self.asset.name .. "_size", self.asset.animation.tilew, self.asset.animation.tileh)
 	local keys = lume.keys(Resources.images)
-	self.newAnim.imgindex = imgui.Combo("##images", self.newAnim.imgindex, keys, lume.count(keys))
-	self.newAnim.image = keys[self.newAnim.imgindex]
-	imgui.PopItemWidth()
-	imgui.Separator()
+	local index = lume.find(keys, self.asset.animation.image)
+	index = imgui.Combo("image##animation_" .. self.asset.animation.image, index, keys, #keys)
+	self.asset.animation.image = keys[index]
 end
 
---- List all animations sets
-function AnimationEditor:listAnimationSets()
-	for k,anim in pairs(self.animationSet) do
-		if imgui.SmallButton("x##remove_anim" .. k) then
-			self.animationSet[k] = nil
-			self.currentAnimationSet = nil
-		end
-		imgui.SameLine()
-		if imgui.SmallButton("..##edit_" .. k) then
-			self.editAnimationSet.current = k
-			self.editAnimationSet.new = k
-			self.editAnimationSet.edit = true
-		end
-		imgui.SameLine()
-		if imgui.Selectable(k) then
-			self.currentAnimationSet = k
-			self:resetCurrent()
+function AnimationEditor:drawAnimationsViewer()
+	local animation = self.asset.animation
+	--self.animationSetViewerProps.image = Resources:getImage(animation.image)
+	local image = Resources:getImage(self.asset.animation.image)
+	--self.animationSetViewerProps.image_width, self.animationSetViewerProps.image_height = image:getDimensions()
+	local image_width, image_height = image:getDimensions()
+	local canvas = love.graphics.newCanvas(image_width, image_height)
+	local image_scale = self.editAnimation.imagescale
+	--self.animationSetViewerProps.quads = {}
+	local quads = {}
+	animation.quads = {}
+	-- local quads = {}
+	canvas:setFilter("nearest", "nearest")
+	love.graphics.setCanvas(canvas)
+	local tw = image_width/animation.tilew
+	local th = image_height/animation.tileh
+	for j=0,th-1 do
+		for i=0,tw-1 do
+			local xx, yy, ww, hh = i * animation.tilew, j * animation.tileh, animation.tilew, animation.tileh
+			local quad = love.graphics.newQuad(xx, yy, ww, hh, image_width, image_height)
+			lume.push(quads, quad)
+			lume.push(animation.quads, {quad:getViewport()})
+			love.graphics.draw(image, quad, xx, yy)
+			love.graphics.rectangle("line", xx, yy, ww, hh)
+			love.graphics.circle("line", xx + (ww/2), yy + (hh/2), 2)
 		end
 	end
+	love.graphics.setCanvas()
+	--local quads = self.animationSetViewerProps.quads
+	self.editAnimation.quads = quads
+	local cw = imgui.GetWindowWidth()
+	self.editAnimation.imagescale = imgui.SliderInt("Zoom", image_scale, 1, 8)
+	imgui.BeginChildFrame(1123, cw, image_height * image_scale + 20, {"ImGuiWindowFlags_HorizontalScrollbar"})
+	imgui.Image(canvas, image_width * image_scale, image_height * image_scale)
+	imgui.EndChildFrame()
 
-	if self.editAnimationSet.edit then
-		imgui.OpenPopup("Edit " .. self.editAnimationSet.current .. "##edit_anim")
-	end
-
-	if imgui.BeginPopupModal("Edit " .. self.editAnimationSet.current .. "##edit_anim", nil, {"ImGuiWindowFlags_NoMove", "ImGuiWindowFlags_NoResize", "ImGuiWindowFlags_AlwaysAutoResize"}) then
-		--print("Testeeee")
-		local animation = self.animationSet[self.editAnimationSet.current]
-		self.editAnimationSet.new = imgui.InputText("Name", self.editAnimationSet.new, 32)
-		local keys = lume.keys(Resources.images)
-		self.editAnimationSet.imgindex = imgui.Combo("##images", self.editAnimationSet.imgindex, keys, lume.count(keys))
-		self.editAnimationSet.image = keys[self.editAnimationSet.imgindex]
-		imgui.Separator()
-		if imgui.Button("Save") then
-			local animation = self.animationSet[self.editAnimationSet.current]
-			if self.editAnimationSet.current ~= self.editAnimationSet.new then
-				lume.remove(self.animationSet, animation)
-				self.animationSet[self.editAnimationSet.new] = animation
-			end
-			animation.image = self.editAnimationSet.image
-			self.editAnimationSet.edit = false
-			if self.currentAnimationSet == self.editAnimationSet.current then
-				self.currentAnimationSet = self.editAnimationSet.new
-			end
-			imgui.CloseCurrentPopup()
+	--[[animation.tilew, animation.tileh = imgui.DragInt2("Cell Size", animation.tilew, animation.tileh)
+	animation.tilew = lume.clamp(animation.tilew, 1, image_width)
+	animation.tileh = lume.clamp(animation.tileh, 1, image_height)]]
+	--imgui.Separator()
+	
+	self.editAnimation.framename = imgui.InputText("##frame_name", self.editAnimation.framename, 32, ".1f")
+	imgui.SameLine()
+	if imgui.Button("Add") then
+		local frame = {
+			name = self.editAnimation.framename,
+			stframe = 0,
+			enframe = 0
+		}
+		if self.editAnimation.framename ~= "" then
+			table.insert(animation.animations, frame)
+			self.editAnimation.framename = ""
 		end
-		imgui.SameLine()
-		if imgui.Button("Cancel") then
-			self.editAnimationSet.edit = false
-			imgui.CloseCurrentPopup()
-		end
-		imgui.EndPopup()
 	end
 end
 
 function AnimationEditor:listAnimations()
-	local animation = self.animationSet[self.currentAnimationSet]
-	local image = self.animationSetViewerProps.image
+	local animation = self.asset.animation
+	local image = Resources:getImage(animation.image)
+	local image_width, image_height = image:getDimensions()
 
-	local tw, th = (self.animationSetViewerProps.image_width/animation.tilew), (self.animationSetViewerProps.image_height/animation.tileh)
+	local tw, th = (image_width/animation.tilew), (image_height/animation.tileh)
 
 	imgui.AlignTextToFramePadding()
 	for i,v in ipairs(animation.animations) do
@@ -175,75 +130,22 @@ function AnimationEditor:listAnimations()
 				self.currentAnimation.name = v.name
 				self.currentAnimation.playing = true
 				self.currentAnimation.frame = 0
-
 			end
 		end
 	end
 end
 
---- Open the animation set viewer
-function AnimationEditor:currentAnimationSetViewer()
-	local animation = self.animationSet[self.currentAnimationSet]
-	self.animationSetViewerProps.image = Resources:getImage(animation.image)
-	local image = self.animationSetViewerProps.image
-	self.animationSetViewerProps.image_width, self.animationSetViewerProps.image_height = image:getDimensions()
-	local image_width, image_height = self.animationSetViewerProps.image_width, self.animationSetViewerProps.image_height
-	local canvas = love.graphics.newCanvas(image_width, image_height)
-	local image_scale = self.animationSetViewerProps.image_scale
-	self.animationSetViewerProps.quads = {}
-	animation.quads = {}
-	-- local quads = {}
-	canvas:setFilter("nearest", "nearest")
-	love.graphics.setCanvas(canvas)
-	local tw = image_width/animation.tilew
-	local th = image_height/animation.tileh
-	for j=0,th-1 do
-		for i=0,tw-1 do
-			local xx, yy, ww, hh = i * animation.tilew, j * animation.tileh, animation.tilew, animation.tileh
-			local quad = love.graphics.newQuad(xx, yy, ww, hh, image_width, image_height)
-			lume.push(self.animationSetViewerProps.quads, quad)
-			lume.push(animation.quads, {quad:getViewport()})
-			love.graphics.draw(image, quad, xx, yy)
-			love.graphics.rectangle("line", xx, yy, ww, hh)
-			love.graphics.circle("line", xx + (ww/2), yy + (hh/2), 2)
-		end
-	end
-	love.graphics.setCanvas()
-	local quads = self.animationSetViewerProps.quads
-	local cw = imgui.GetWindowWidth()
-	imgui.BeginChildFrame(1123, cw, image_height * self.animationSetViewerProps.image_scale + 20, {"ImGuiWindowFlags_HorizontalScrollbar"})
-	imgui.Image(canvas, image_width * image_scale, image_height * image_scale)
-	imgui.EndChildFrame()
-
-
-	self.animationSetViewerProps.image_scale = imgui.SliderInt("Zoom", self.animationSetViewerProps.image_scale, 1, 8)
-	animation.tilew, animation.tileh = imgui.DragInt2("Cell Size", animation.tilew, animation.tileh)
-	animation.tilew = lume.clamp(animation.tilew, 1, image_width)
-	animation.tileh = lume.clamp(animation.tileh, 1, image_height)
-	imgui.Separator()
-	
-	self.animationSetViewerProps.frameName = imgui.InputText("##frame_name", self.animationSetViewerProps.frameName, 32, ".1f")
-	imgui.SameLine()
-	if imgui.Button("Add") then
-		local frame = {
-			name = self.animationSetViewerProps.frameName,
-			stframe = 0,
-			enframe = 0
-		}
-		if self.animationSetViewerProps.frameName ~= "" then
-			table.insert(animation.animations, frame)
-			self.animationSetViewerProps.frameName = ""
-		end
-	end
-end
-
---- Open the current animation viewer
 function AnimationEditor:currentAnimationViewer()
 	local animation = self.currentAnimation
-	local image = self.animationSetViewerProps.image
+	local image = Resources:getImage(self.asset.animation.image)
 	local w,h = image:getDimensions()
-	local quads = self.animationSetViewerProps.quads
-	local ww = imgui.GetColumnWidth()
+	local quads = self.editAnimation.quads
+	local ww = imgui.GetWindowWidth()
+	local hh = imgui.GetWindowHeight()
+	--print(imgui.GetWindowHeight())
+	animation.speed = imgui.DragInt("Speed##anim_spd", animation.speed)
+	local cpos = {imgui.GetCursorPos()}
+	local imgsize = math.min(ww, hh-cpos[2])
 	if animation.playing then
 		animation.cspeed = animation.cspeed - (animation.speed * 0.05)
 
@@ -263,87 +165,50 @@ function AnimationEditor:currentAnimationViewer()
 		qy = qy/h
 		qw = qx + qw/w
 		qh = qy + qh/h
-		imgui.Image(image, ww, ww, qx, qy, qw, qh)
+		imgui.Image(image, imgsize, imgsize, qx, qy, qw, qh)
 	else
+		if lume.count(quads) <= 0 then
+			local ww, hh = self.asset.animation.tilew, self.asset.animation.tileh
+			quads[1] = love.graphics.newQuad(0, 0, ww, hh, w, h)
+		end
 		local qx,qy,qw,qh = quads[1]:getViewport()
 		qx = qx/w
 		qy = qy/h
 		qw = qx + qw/w
 		qh = qy + qh/h
-		imgui.Image(image, ww, ww, qx, qy, qw, qh)
+		imgui.Image(image, imgsize, imgsize, qx, qy, qw, qh)
 	end
-	animation.speed = imgui.DragInt("Speed##anim_spd", animation.speed)
-end
-
---- Reset the current playing animation state
-function AnimationEditor:resetCurrent()
-	self.currentAnimation.name = ""
-	self.currentAnimation.playing = false
-	self.currentAnimation.image = nil
+	--print(imgui.GetCursorPos())
 end
 
 function AnimationEditor:draw()
+	self.open = imgui.Begin(self.asset.name, true)
 	if self.open then
-		imgui.Begin("Animation Editor")
-
-		self:createNewSet()
-
-		imgui.Columns(3)
-		if self.firstOpen then
-			local w = imgui.GetWindowSize()
-			imgui.SetColumnWidth(0, w/4)
-			imgui.SetColumnWidth(1,w/2)
-			self.firstOpen = false
-		end
-
-		self:listAnimationSets()
-
-		imgui.NextColumn()
-
-		if self.currentAnimationSet then 
-			--for k,anim in pairs(self.animations[self.currentAnimation]) do
-			imgui.BeginChild("Animation Editor##anim_editor")
-			self:currentAnimationSetViewer()
-			self:listAnimations()
-			--[[
-			]]
-
-			imgui.EndChild()
-
-			imgui.NextColumn()
-
+		imgui.Columns(2)
+		if imgui.BeginChild("Props##props_and_viewer") then
+			self:drawAnimationInfo()
+			imgui.Separator()
 			self:currentAnimationViewer()
-
-			--imgui.BeginChild("Animation Viewer##anim_viewer")
-			--imgui.Text("Preview")
-			--[[
-			--imgui.EndChild()
-			--end
-			--[[local image = Resources:getImage("knight-walk.png")
-			local w,h = image:getDimensions()
-			imgui.Image(image, w, h)
-			if imgui.Button("Add") then
-
-			end
-			imgui.Text("Idle")
-			imgui.SameLine()
-			imgui.DragInt2("##frames", 2, 5)
-			imgui.SameLine()
-			if imgui.SmallButton("-") then
-			end]]
+			imgui.EndChild()
 		end
-		--self:save()
-
-		imgui.End()
+		imgui.NextColumn()
+		self:drawAnimationsViewer()
+		self:listAnimations()
+		--imgui.NextColumn()
+	else
+		Resources:saveAnimation(self.asset.animation.name, self.asset.animation)
+		if self.asset.animation.name ~= self.asset.name then
+			Resources:removeAnimation(self.asset.name)
+		end
 	end
+	imgui.End()
 end
 
-function AnimationEditor:save()
-	--local test = bitser.dumps(self.animationSet)
-	for k,animation in pairs(self.animationSet) do
-		Resources:saveAnimation(k, animation)
+function AnimationEditor:saveAnimation()
+	if self.asset.name ~= self.asset.animation.name then
+		Resources:removeAnimation(self.asset.name)
 	end
-	--print(test)
+	Resources:saveAnimation(self.asset.animation.name, self.asset.animation)
 end
 
 return AnimationEditor

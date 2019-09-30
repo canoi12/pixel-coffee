@@ -171,7 +171,7 @@
 			"file": "src/pixcof/class.lua",
 			"settings":
 			{
-				"buffer_size": 353,
+				"buffer_size": 861,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -180,16 +180,46 @@
 			"file": "src/pixcof/init.lua",
 			"settings":
 			{
-				"buffer_size": 1236,
+				"buffer_size": 1375,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
+			"contents": "local Class = require(\"pixcof.class\")\nlocal Entity = Class:extend(\"Entity\")\n\nfunction Entity:constructor(x, y)\n\tself.x = x or 0\n\tself.y = y or 0\n\tself.angle = 0\n\tself.scale = {\n\t\tx = 1,\n\t\ty = 1\n\t}\n\tself.origin = {\n\t\tx = 0,\n\t\ty = 0\n\t}\n\tself.components = {}\n\tself.width = 16\n\tself.height = 16\n\tself.animation = nil\n\tself.image = nil\n\t--[[self.centerx = 0\n\tself.centery = 0]]\nend\n\nfunction Entity:addComponent(component)\n\tlume.push(self.components, component)\nend\n\nfunction Entity:getComponent(componentType)\n\tfor i,component in ipairs(self.components) do\n\t\tif component:is(componentType) then return component end\n\tend\n\treturn nil\nend\n\nfunction Entity:removeComponent(component)\n\tif type(component) == \"string\" then\n\t\tlocal comp = self:getComponent(component)\n\t\tlume.remove(self.components, comp)\n\t\treturn\n\tend\n\tlume.remove(self.components, component)\nend\n\nfunction Entity:update(dt)\n\t--if self.animation and self.animation:is(\"Animation\") then self.animation:update(dt) end\n\tlume.each(self.components, \"update\", dt)\nend\n\nfunction Entity:draw()\n\t--[[if self.animation and self.animation:is(\"Animation\") then self.animation:drawEntity(self) \n\telseif self.image then lg.draw(self.image, self.x, self.y, self.angle, self.scale.x, self.scale.y, self.origin.x, self.origin.y) end]]\n\tlume.each(self.components, \"draw\")\nend\n\nfunction Entity:debugDraw(active)\n\t--[[local image = {32, 32}\n\tif not self.width or not self.height then\n\t\tif self.animation then image = {self.animation.width, self.animation.height}\n\t\telseif self.image then image = {self.image:getDimensions()} end\n\t\tprint(image[1], image[2])\n\t\tself.width = image[1]\n\t\tself.height = image[2]\n\tend]]\n\tlocal origin = {\n\t\tx = 0,\n\t\ty = 0\n\t}\n\tlocal width = self.width or 32\n\tlocal height = self.height or 32\n\tlocal comp = self:getComponent(\"SpriteComponent\")\n\tif comp then\n\t\torigin = comp.origin\n\t\twidth, height = comp.width, comp.height\n\tend\n\tlove.graphics.setColor(1, 1, 1, 1)\n\tif active then love.graphics.setColor(1, 0, 0, 1) end\n\tlove.graphics.rectangle(\"line\", self.x, self.y, width*self.scale.x, height*self.scale.y)\n\tlove.graphics.circle(\"fill\", self.x + origin.x, self.y + origin.y, 2)\n\tlove.graphics.setColor(1, 1, 1, 1)\nend\n\nfunction Entity:isHovering(x, y)\n\tlocal comp = self:getComponent(\"SpriteComponent\")\n\tif comp then \n\t\tself.width = comp.width\n\t\tself.height = comp.height\n\tend\n\tlocal xx = self.x - self.origin.x\n\tlocal yy = self.y - self.origin.y\n\tlocal ww = xx + self.width * self.scale.x\n\tlocal hh = yy + self.height * self.scale.y\n\tif x >= xx and x <= ww and y >= yy and y <= hh then\n\t\treturn true\n\tend\n\treturn false\nend\n\nreturn Entity",
 			"file": "src/pixcof/entity.lua",
+			"file_size": 2597,
+			"file_write_time": 132142614865085253,
 			"settings":
 			{
-				"buffer_size": 1220,
+				"buffer_size": 2601,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/components/spritecomponent.lua",
+			"settings":
+			{
+				"buffer_size": 1818,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/components/component.lua",
+			"settings":
+			{
+				"buffer_size": 283,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/objects/player.lua",
+			"settings":
+			{
+				"buffer_size": 349,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -207,16 +237,33 @@
 			"file": "src/pixcof/debug.lua",
 			"settings":
 			{
-				"buffer_size": 2477,
+				"buffer_size": 3165,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/pixcof/editors/tileseteditor.lua",
+			"file": "/home/canoi/Documentos/Projects/love2d/TestImGui/main.lua",
 			"settings":
 			{
-				"buffer_size": 12257,
+				"buffer_size": 1550,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/viewers/init.lua",
+			"settings":
+			{
+				"buffer_size": 225,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/editors/tileseteditor-old.lua",
+			"settings":
+			{
+				"buffer_size": 12256,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -225,61 +272,70 @@
 			"file": "src/pixcof/editors/sceneeditor.lua",
 			"settings":
 			{
-				"buffer_size": 17977,
+				"buffer_size": 17555,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/pixcof/editors/resourcesviewer.lua",
+			"file": "src/pixcof/layers/backgroundlayer.lua",
 			"settings":
 			{
-				"buffer_size": 3979,
+				"buffer_size": 2023,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/pixcof/editors/animationeditor.lua",
+			"file": "src/assets/tilesets/vulcan.lua",
 			"settings":
 			{
-				"buffer_size": 10380,
+				"buffer_size": 570,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/viewers/resourcesviewer.lua",
+			"settings":
+			{
+				"buffer_size": 11128,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/pixcof/scenemanager.lua",
+			"file": "src/pixcof/viewers/fontviewer.lua",
 			"settings":
 			{
-				"buffer_size": 1058,
+				"buffer_size": 1015,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/pixcof/resources.lua",
+			"contents": "Searching 61 files for \"extends\"\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/objects/boto.lua:\n    1  local Enemy = require(\"objects.enemy\")\n    2  local Resources = require(\"pixcof.resources\")\n    3: local Boto = Enemy:extend(\"Boto\")\n    4  \n    5  function Boto:constructor(x, y)\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/objects/camaleao.lua:\n    1  local Entity = require(\"pixcof.entity\")\n    2  local Animation = require(\"pixcof.animation\")\n    3: local Camaleao = Entity:extend(\"Camaleao\")\n    4  \n    5  function Camaleao:constructor(x, y)\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/objects/dolphin.lua:\n    1  local Enemy = require(\"objects.enemy\")\n    2  local Animation = require(\"pixcof.animation\")\n    3: local Dolphin = Enemy:extend(\"Dolphin\")\n    4  \n    5  function Dolphin:constructor(x, y)\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/objects/enemy.lua:\n    1  local Entity = require(\"pixcof.entity\")\n    2: local Enemy = Entity:extend(\"Enemy\")\n    3  \n    4  return Enemy\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/objects/player.lua:\n    1  local Entity = require(\"pixcof.entity\")\n    2: local Player = Entity:extend(\"Player\")\n    3  local Animation = require(\"pixcof.animation\")\n    4  \n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/animation.lua:\n    2  local Resources = require(\"pixcof.resources\")\n    3  local lume = require(\"pixcof.libs.lume\")\n    4: local Animation = Class:extend(\"Animation\")\n    5  \n    6  function Animation:constructor(name, speed)\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/class.lua:\n    6  end\n    7  \n    8: function Class:extend(name)\n    9  \t--local o = setmetatable({}, { __index = self, __call = self.new, __tostring = self.__tostring })\n   10  \tlocal o = setmetatable({}, self)\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/debug.lua:\n    1  local Class = require(\"pixcof.class\")\n    2: local Debug = Class:extend(\"Debug\")\n    3  local Editors = require(\"pixcof.editors\")\n    4  local Viewers = require(\"pixcof.viewers\")\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/entity.lua:\n    1  local Class = require(\"pixcof.class\")\n    2: local Entity = Class:extend(\"Entity\")\n    3  \n    4  function Entity:constructor(x, y)\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/game.lua:\n    1  local Class = require(\"pixcof.class\")\n    2: local Game = Class:extend(\"Game\")\n    3  \n    4  function Game:constructor()\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/scene.lua:\n    2  local Resources = require(\"pixcof.resources\")\n    3  local lume = require(\"pixcof.libs.lume\")\n    4: local Scene = Class:extend(\"Scene\")\n    5  local Tilemap = require(\"pixcof.tilemap\")\n    6  local Layers = require(\"pixcof.layers\")\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/tilemap.lua:\n    4  \n    5  --local Debug = require(\"pixcof.debug\")\n    6: local Tilemap = Class:extend(\"Tilemap\")\n    7  Tilemap.__constructors = {\"load\"}\n    8  \n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/tileset.lua:\n    1  local Class = require(\"pixcof.class\")\n    2  local Resources = require(\"pixcof.resources\")\n    3: local Tileset = Class:extend(\"Tileset\")\n    4  \n    5  function Tileset:constructor(tileset)\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors/tileseteditor-old.lua:\n    2  local Resources = require(\"pixcof.resources\")\n    3  local lume = require(\"pixcof.libs.lume\")\n    4: local TilesetEditor = Editor:extend(\"TilesetEditor\")\n    5  local Animation = {}\n    6  \n\n/home/canoi/Documentos/Projects/Frameworks/pixel-coffee/src/pixcof/debug.lua:\n    2  local lume = require(\"pixcof.libs.lume\")\n    3  local Resources = require(\"pixcof.resources\")\n    4: local Debug = Class:extend(\"Debug\")\n    5  local Tilemap = require(\"pixcof.tilemap\")\n    6  local Editor = require \"pixcof.editors\"\n\n15 matches across 15 files\n\n\nSearching 61 files for \"extends\"\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/objects/boto.lua:\n    1  local Enemy = require(\"objects.enemy\")\n    2  local Resources = require(\"pixcof.resources\")\n    3: local Boto = Enemy:extends(\"Boto\")\n    4  \n    5  function Boto:constructor(x, y)\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/objects/camaleao.lua:\n    1  local Entity = require(\"pixcof.entity\")\n    2  local Animation = require(\"pixcof.animation\")\n    3: local Camaleao = Entity:extends(\"Camaleao\")\n    4  \n    5  function Camaleao:constructor(x, y)\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/objects/dolphin.lua:\n    1  local Enemy = require(\"objects.enemy\")\n    2  local Animation = require(\"pixcof.animation\")\n    3: local Dolphin = Enemy:extends(\"Dolphin\")\n    4  \n    5  function Dolphin:constructor(x, y)\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/objects/enemy.lua:\n    1  local Entity = require(\"pixcof.entity\")\n    2: local Enemy = Entity:extends(\"Enemy\")\n    3  \n    4  return Enemy\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/objects/player.lua:\n    1  local Entity = require(\"pixcof.entity\")\n    2: local Player = Entity:extends(\"Player\")\n    3  local Animation = require(\"pixcof.animation\")\n    4  \n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/animation.lua:\n    2  local Resources = require(\"pixcof.resources\")\n    3  local lume = require(\"pixcof.libs.lume\")\n    4: local Animation = Class:extends(\"Animation\")\n    5  \n    6  function Animation:constructor(name, speed)\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/class.lua:\n    6  end\n    7  \n    8: function Class:extends(name)\n    9  \t--local o = setmetatable({}, { __index = self, __call = self.new, __tostring = self.__tostring })\n   10  \tlocal o = setmetatable({}, self)\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/debug.lua:\n    1  local Class = require(\"pixcof.class\")\n    2: local Debug = Class:extends(\"Debug\")\n    3  local Editors = require(\"pixcof.editors\")\n    4  local Viewers = require(\"pixcof.viewers\")\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/entity.lua:\n    1  local Class = require(\"pixcof.class\")\n    2: local Entity = Class:extends(\"Entity\")\n    3  \n    4  function Entity:constructor(x, y)\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/game.lua:\n    1  local Class = require(\"pixcof.class\")\n    2: local Game = Class:extends(\"Game\")\n    3  \n    4  function Game:constructor()\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/scene.lua:\n    2  local Resources = require(\"pixcof.resources\")\n    3  local lume = require(\"pixcof.libs.lume\")\n    4: local Scene = Class:extends(\"Scene\")\n    5  local Tilemap = require(\"pixcof.tilemap\")\n    6  local Layers = require(\"pixcof.layers\")\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/tilemap.lua:\n    4  \n    5  --local Debug = require(\"pixcof.debug\")\n    6: local Tilemap = Class:extends(\"Tilemap\")\n    7  Tilemap.__constructors = {\"load\"}\n    8  \n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/tileset.lua:\n    1  local Class = require(\"pixcof.class\")\n    2  local Resources = require(\"pixcof.resources\")\n    3: local Tileset = Class:extends(\"Tileset\")\n    4  \n    5  function Tileset:constructor(tileset)\n\n/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors/tileseteditor-old.lua:\n    2  local Resources = require(\"pixcof.resources\")\n    3  local lume = require(\"pixcof.libs.lume\")\n    4: local TilesetEditor = Editor:extends(\"TilesetEditor\")\n    5  local Animation = {}\n    6  \n\n/home/canoi/Documentos/Projects/Frameworks/pixel-coffee/src/pixcof/debug.lua:\n    2  local lume = require(\"pixcof.libs.lume\")\n    3  local Resources = require(\"pixcof.resources\")\n    4: local Debug = Class:extends(\"Debug\")\n    5  local Tilemap = require(\"pixcof.tilemap\")\n    6  local Editor = require \"pixcof.editors\"\n\n15 matches across 15 files\n",
 			"settings":
 			{
-				"buffer_size": 5206,
+				"buffer_size": 7775,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "src/pixcof/viewers/imageviewer.lua",
+			"settings":
+			{
+				"buffer_size": 551,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/pixcof/scene.lua",
+			"file": "src/objects/camaleao.lua",
 			"settings":
 			{
-				"buffer_size": 2506,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/objects/player.lua",
-			"settings":
-			{
-				"buffer_size": 589,
+				"buffer_size": 616,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -288,25 +344,130 @@
 			"file": "src/pixcof/animation.lua",
 			"settings":
 			{
-				"buffer_size": 1796,
+				"buffer_size": 2750,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/pixcof/libs/lume.lua",
+			"file": "src/assets/animations/boto.lua",
 			"settings":
 			{
-				"buffer_size": 15784,
+				"buffer_size": 173,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/editors/animationeditor.lua",
+			"settings":
+			{
+				"buffer_size": 7298,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/assets/tilemaps/testando.lua",
+			"file": "src/pixcof/editors/tileseteditor.lua",
 			"settings":
 			{
-				"buffer_size": 1798,
+				"buffer_size": 11528,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/resources.lua",
+			"settings":
+			{
+				"buffer_size": 5304,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/input.lua",
+			"settings":
+			{
+				"buffer_size": 2071,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/layers/entitylayer.lua",
+			"settings":
+			{
+				"buffer_size": 3717,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/layers/tilemaplayer.lua",
+			"settings":
+			{
+				"buffer_size": 9548,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/assets/tilesets/dungeon.lua",
+			"settings":
+			{
+				"buffer_size": 1752,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/viewers/viewer.lua",
+			"settings":
+			{
+				"buffer_size": 228,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/tileset.lua",
+			"settings":
+			{
+				"buffer_size": 1819,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/scene.lua",
+			"settings":
+			{
+				"buffer_size": 8719,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/layers/layer.lua",
+			"settings":
+			{
+				"buffer_size": 465,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/layers/init.lua",
+			"settings":
+			{
+				"buffer_size": 232,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
@@ -315,6 +476,15 @@
 			"settings":
 			{
 				"buffer_size": 44113,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/canoi/Documentos/Projects/Frameworks/pixel-coffee/src/pixcof/debug.lua",
+			"settings":
+			{
+				"buffer_size": 17033,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -337,10 +507,38 @@
 			}
 		},
 		{
-			"file": "src/assets/tilemaps/opaaa.lua",
+			"contents": "local _={}\n_[94]={y=1,x=1}\n_[93]={y=1,x=1}\n_[92]={y=1,x=1}\n_[91]={y=1,x=1}\n_[90]={x=320,y=48,type=\"Dolphin\",scale=_[94],angle=0}\n_[89]={x=256,y=208,type=\"Dolphin\",scale=_[93],angle=0}\n_[88]={x=132,y=234,type=\"Player\",scale=_[92],angle=0}\n_[87]={x=32,y=143,type=\"Dolphin\",scale=_[91],angle=0}\n_[86]={112,112,16,16}\n_[85]={96,112,16,16}\n_[84]={80,112,16,16}\n_[83]={64,112,16,16}\n_[82]={48,112,16,16}\n_[81]={32,112,16,16}\n_[80]={16,112,16,16}\n_[79]={0,112,16,16}\n_[78]={112,96,16,16}\n_[77]={96,96,16,16}\n_[76]={80,96,16,16}\n_[75]={64,96,16,16}\n_[74]={48,96,16,16}\n_[73]={32,96,16,16}\n_[72]={16,96,16,16}\n_[71]={0,96,16,16}\n_[70]={112,80,16,16}\n_[69]={96,80,16,16}\n_[68]={80,80,16,16}\n_[67]={64,80,16,16}\n_[66]={48,80,16,16}\n_[65]={32,80,16,16}\n_[64]={16,80,16,16}\n_[63]={0,80,16,16}\n_[62]={112,64,16,16}\n_[61]={96,64,16,16}\n_[60]={80,64,16,16}\n_[59]={64,64,16,16}\n_[58]={48,64,16,16}\n_[57]={32,64,16,16}\n_[56]={16,64,16,16}\n_[55]={0,64,16,16}\n_[54]={112,48,16,16}\n_[53]={96,48,16,16}\n_[52]={80,48,16,16}\n_[51]={64,48,16,16}\n_[50]={48,48,16,16}\n_[49]={32,48,16,16}\n_[48]={16,48,16,16}\n_[47]={0,48,16,16}\n_[46]={112,32,16,16}\n_[45]={96,32,16,16}\n_[44]={80,32,16,16}\n_[43]={64,32,16,16}\n_[42]={48,32,16,16}\n_[41]={32,32,16,16}\n_[40]={16,32,16,16}\n_[39]={0,32,16,16}\n_[38]={112,16,16,16}\n_[37]={96,16,16,16}\n_[36]={80,16,16,16}\n_[35]={64,16,16,16}\n_[34]={48,16,16,16}\n_[33]={32,16,16,16}\n_[32]={16,16,16,16}\n_[31]={0,16,16,16}\n_[30]={112,0,16,16}\n_[29]={96,0,16,16}\n_[28]={80,0,16,16}\n_[27]={64,0,16,16}\n_[26]={48,0,16,16}\n_[25]={32,0,16,16}\n_[24]={16,0,16,16}\n_[23]={0,0,16,16}\n_[22]={10,10,10,10,10,13,2,2,2,2,2,2,2,14,10,10,10,10,10,10,10,10,10,10,10}\n_[21]={10,10,13,2,2,3,-1,-1,-1,-1,-1,-1,-1,1,2,2,2,2,2,2,2,2,2,2,2}\n_[20]={10,13,3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}\n_[19]={10,11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}\n_[18]={10,11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}\n_[17]={10,54,52,52,53,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}\n_[16]={13,3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,17,18}\n_[15]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9,10}\n_[14]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9,10}\n_[13]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9,10}\n_[12]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9,10}\n_[11]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,51,52,52,52,55,10}\n_[10]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,17,19,-1,-1,-1,-1,-1,-1,-1,-1,-1,9,10}\n_[9]={11,-1,-1,-1,-1,-1,-1,-1,-1,51,52,52,55,11,-1,-1,-1,-1,-1,-1,-1,-1,-1,9,10}\n_[8]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9,11,-1,-1,-1,-1,-1,-1,-1,-1,-1,9,10}\n_[7]={5,18,18,18,18,18,18,18,18,18,18,18,6,5,18,18,18,18,18,18,18,18,18,6,10}\n_[6]={_[87],_[88],_[89],_[90]}\n_[5]={_[23],_[24],_[25],_[26],_[27],_[28],_[29],_[30],_[31],_[32],_[33],_[34],_[35],_[36],_[37],_[38],_[39],_[40],_[41],_[42],_[43],_[44],_[45],_[46],_[47],_[48],_[49],_[50],_[51],_[52],_[53],_[54],_[55],_[56],_[57],_[58],_[59],_[60],_[61],_[62],_[63],_[64],_[65],_[66],_[67],_[68],_[69],_[70],_[71],_[72],_[73],_[74],_[75],_[76],_[77],_[78],_[79],_[80],_[81],_[82],_[83],_[84],_[85],_[86]}\n_[4]={_[7],_[8],_[9],_[10],_[11],_[12],_[13],_[14],_[15],_[16],_[17],_[18],_[19],_[20],_[21],_[22]}\n_[3]={type=\"Entity\",name=\"obj\",entities=_[6]}\n_[2]={tiles=_[4],type=\"Tile\",tileset=\"forest\",name=\"chao\",quads=_[5]}\n_[1]={_[2],_[3]}\nreturn {tilew=16,layers=_[1],tileh=16,height=16,name=\"forest\",width=25}",
+			"file": "src/assets/tilemaps/forest.lua",
+			"file_size": 3587,
+			"file_write_time": 132140420582588588,
 			"settings":
 			{
-				"buffer_size": 3234,
+				"buffer_size": 3587,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "local _={}\n_[188]={y=1,x=1}\n_[187]={y=1,x=1}\n_[186]={y=1,x=1}\n_[185]={y=1,x=1}\n_[184]={y=1,x=1}\n_[183]={y=1,x=1}\n_[182]={y=1,x=1}\n_[181]={y=1,x=1}\n_[180]={y=1,x=1}\n_[179]={x=768,y=1552,type=\"Dolphin\",scale=_[188],angle=0}\n_[178]={x=464,y=1552,type=\"Dolphin\",scale=_[187],angle=0}\n_[177]={x=187,y=1546,type=\"Player\",scale=_[186],angle=0}\n_[176]={x=1184,y=1544,type=\"Boto\",scale=_[185],angle=0}\n_[175]={x=976,y=1561,type=\"Boto\",scale=_[184],angle=0}\n_[174]={x=864,y=1560,type=\"Boto\",scale=_[183],angle=0}\n_[173]={x=704,y=1560,type=\"Boto\",scale=_[182],angle=0}\n_[172]={x=576,y=1560,type=\"Boto\",scale=_[181],angle=0}\n_[171]={x=384,y=1560,type=\"Boto\",scale=_[180],angle=0}\n_[170]={112,112,16,16}\n_[169]={96,112,16,16}\n_[168]={80,112,16,16}\n_[167]={64,112,16,16}\n_[166]={48,112,16,16}\n_[165]={32,112,16,16}\n_[164]={16,112,16,16}\n_[163]={0,112,16,16}\n_[162]={112,96,16,16}\n_[161]={96,96,16,16}\n_[160]={80,96,16,16}\n_[159]={64,96,16,16}\n_[158]={48,96,16,16}\n_[157]={32,96,16,16}\n_[156]={16,96,16,16}\n_[155]={0,96,16,16}\n_[154]={112,80,16,16}\n_[153]={96,80,16,16}\n_[152]={80,80,16,16}\n_[151]={64,80,16,16}\n_[150]={48,80,16,16}\n_[149]={32,80,16,16}\n_[148]={16,80,16,16}\n_[147]={0,80,16,16}\n_[146]={112,64,16,16}\n_[145]={96,64,16,16}\n_[144]={80,64,16,16}\n_[143]={64,64,16,16}\n_[142]={48,64,16,16}\n_[141]={32,64,16,16}\n_[140]={16,64,16,16}\n_[139]={0,64,16,16}\n_[138]={112,48,16,16}\n_[137]={96,48,16,16}\n_[136]={80,48,16,16}\n_[135]={64,48,16,16}\n_[134]={48,48,16,16}\n_[133]={32,48,16,16}\n_[132]={16,48,16,16}\n_[131]={0,48,16,16}\n_[130]={112,32,16,16}\n_[129]={96,32,16,16}\n_[128]={80,32,16,16}\n_[127]={64,32,16,16}\n_[126]={48,32,16,16}\n_[125]={32,32,16,16}\n_[124]={16,32,16,16}\n_[123]={0,32,16,16}\n_[122]={112,16,16,16}\n_[121]={96,16,16,16}\n_[120]={80,16,16,16}\n_[119]={64,16,16,16}\n_[118]={48,16,16,16}\n_[117]={32,16,16,16}\n_[116]={16,16,16,16}\n_[115]={0,16,16,16}\n_[114]={112,0,16,16}\n_[113]={96,0,16,16}\n_[112]={80,0,16,16}\n_[111]={64,0,16,16}\n_[110]={48,0,16,16}\n_[109]={32,0,16,16}\n_[108]={16,0,16,16}\n_[107]={0,0,16,16}\n_[106]={10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,13,2,2,2,2,2,2,2,2,14,10,13,2,2,2,2,2,2,2,2,14,10,13,2,2,2,2,2,14,10,10,10,13,2,2,2,2,2,2,2,2,2,2,2,2,2,2,14,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,13,2,2,2,2,2,2,2,2,2,2,2,2,2}\n_[105]={10,10,10,10,10,10,10,10,10,10,10,10,10,10,13,2,2,2,2,3,-1,-1,-1,-1,-1,-1,-1,-1,1,2,3,-1,-1,-1,-1,-1,-1,-1,-1,1,2,3,-1,-1,-1,-1,-1,1,2,2,2,3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}\n_[104]={13,2,2,2,14,10,10,10,13,2,2,2,2,2,3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}\n_[103]={11,-1,-1,-1,1,2,2,2,3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}\n_[102]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}\n_[101]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}\n_[100]={54,52,52,52,53,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}\n_[99]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,17}\n_[98]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[97]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[96]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[95]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[94]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[93]={54,52,52,52,53,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[92]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[91]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[90]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[89]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[88]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[87]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[86]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[85]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[84]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[83]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[82]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[81]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[80]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[79]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[78]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[77]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[76]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[75]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[74]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[73]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[72]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[71]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[70]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[69]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[68]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[67]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[66]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[65]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[64]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[63]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[62]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[61]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[60]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[59]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[58]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[57]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[56]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[55]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[54]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[53]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[52]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[51]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[50]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[49]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[48]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[47]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[46]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[45]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[44]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[43]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[42]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[41]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[40]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[39]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[38]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[37]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[36]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[35]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[34]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[33]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[32]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[31]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[30]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[29]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[28]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[27]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[26]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[25]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[24]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[23]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[22]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[21]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[20]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[19]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[18]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[17]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[16]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[15]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[14]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[13]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[12]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[11]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[10]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[9]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[8]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[7]={5,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,6}\n_[6]={_[171],_[172],_[173],_[174],_[175],_[176],_[177],_[178],_[179]}\n_[5]={_[107],_[108],_[109],_[110],_[111],_[112],_[113],_[114],_[115],_[116],_[117],_[118],_[119],_[120],_[121],_[122],_[123],_[124],_[125],_[126],_[127],_[128],_[129],_[130],_[131],_[132],_[133],_[134],_[135],_[136],_[137],_[138],_[139],_[140],_[141],_[142],_[143],_[144],_[145],_[146],_[147],_[148],_[149],_[150],_[151],_[152],_[153],_[154],_[155],_[156],_[157],_[158],_[159],_[160],_[161],_[162],_[163],_[164],_[165],_[166],_[167],_[168],_[169],_[170]}\n_[4]={_[7],_[8],_[9],_[10],_[11],_[12],_[13],_[14],_[15],_[16],_[17],_[18],_[19],_[20],_[21],_[22],_[23],_[24],_[25],_[26],_[27],_[28],_[29],_[30],_[31],_[32],_[33],_[34],_[35],_[36],_[37],_[38],_[39],_[40],_[41],_[42],_[43],_[44],_[45],_[46],_[47],_[48],_[49],_[50],_[51],_[52],_[53],_[54],_[55],_[56],_[57],_[58],_[59],_[60],_[61],_[62],_[63],_[64],_[65],_[66],_[67],_[68],_[69],_[70],_[71],_[72],_[73],_[74],_[75],_[76],_[77],_[78],_[79],_[80],_[81],_[82],_[83],_[84],_[85],_[86],_[87],_[88],_[89],_[90],_[91],_[92],_[93],_[94],_[95],_[96],_[97],_[98],_[99],_[100],_[101],_[102],_[103],_[104],_[105],_[106]}\n_[3]={type=\"Entity\",name=\"entities\",entities=_[6]}\n_[2]={tiles=_[4],type=\"Tile\",tileset=\"forest\",name=\"chao\",quads=_[5]}\n_[1]={_[2],_[3]}\nreturn {tilew=16,layers=_[1],tileh=16,height=100,name=\"novooooo\",width=100}",
+			"file": "src/assets/tilemaps/novooooo.lua",
+			"file_size": 33973,
+			"file_write_time": 132140002219901273,
+			"settings":
+			{
+				"buffer_size": 33973,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "local _={}\n_[102]={y=1,x=1}\n_[101]={y=1,x=1}\n_[100]={y=1,x=1}\n_[99]={y=1,x=1}\n_[98]={y=1,x=1}\n_[97]={y=1,x=1}\n_[96]={y=1,x=1}\n_[95]={y=1,x=1}\n_[94]={x=198,y=210,type=\"Dolphin\",scale=_[102],angle=0}\n_[93]={x=293,y=199,type=\"Boto\",scale=_[101],angle=0}\n_[92]={x=753,y=102,type=\"Boto\",scale=_[100],angle=0}\n_[91]={x=682,y=216,type=\"Boto\",scale=_[99],angle=0}\n_[90]={x=116,y=215,type=\"Boto\",scale=_[98],angle=0}\n_[89]={x=575,y=200,type=\"Boto\",scale=_[97],angle=0}\n_[88]={x=357,y=216,type=\"Boto\",scale=_[96],angle=0}\n_[87]={x=61,y=219,type=\"Player\",scale=_[95],angle=0}\n_[86]={112,112,16,16}\n_[85]={96,112,16,16}\n_[84]={80,112,16,16}\n_[83]={64,112,16,16}\n_[82]={48,112,16,16}\n_[81]={32,112,16,16}\n_[80]={16,112,16,16}\n_[79]={0,112,16,16}\n_[78]={112,96,16,16}\n_[77]={96,96,16,16}\n_[76]={80,96,16,16}\n_[75]={64,96,16,16}\n_[74]={48,96,16,16}\n_[73]={32,96,16,16}\n_[72]={16,96,16,16}\n_[71]={0,96,16,16}\n_[70]={112,80,16,16}\n_[69]={96,80,16,16}\n_[68]={80,80,16,16}\n_[67]={64,80,16,16}\n_[66]={48,80,16,16}\n_[65]={32,80,16,16}\n_[64]={16,80,16,16}\n_[63]={0,80,16,16}\n_[62]={112,64,16,16}\n_[61]={96,64,16,16}\n_[60]={80,64,16,16}\n_[59]={64,64,16,16}\n_[58]={48,64,16,16}\n_[57]={32,64,16,16}\n_[56]={16,64,16,16}\n_[55]={0,64,16,16}\n_[54]={112,48,16,16}\n_[53]={96,48,16,16}\n_[52]={80,48,16,16}\n_[51]={64,48,16,16}\n_[50]={48,48,16,16}\n_[49]={32,48,16,16}\n_[48]={16,48,16,16}\n_[47]={0,48,16,16}\n_[46]={112,32,16,16}\n_[45]={96,32,16,16}\n_[44]={80,32,16,16}\n_[43]={64,32,16,16}\n_[42]={48,32,16,16}\n_[41]={32,32,16,16}\n_[40]={16,32,16,16}\n_[39]={0,32,16,16}\n_[38]={112,16,16,16}\n_[37]={96,16,16,16}\n_[36]={80,16,16,16}\n_[35]={64,16,16,16}\n_[34]={48,16,16,16}\n_[33]={32,16,16,16}\n_[32]={16,16,16,16}\n_[31]={0,16,16,16}\n_[30]={112,0,16,16}\n_[29]={96,0,16,16}\n_[28]={80,0,16,16}\n_[27]={64,0,16,16}\n_[26]={48,0,16,16}\n_[25]={32,0,16,16}\n_[24]={16,0,16,16}\n_[23]={0,0,16,16}\n_[22]={10,10,10,10,10,13,2,2,2,2,2,2,14,13,2,2,2,14,10,10,13,2,2,2,2,2,2,2,2,2,2,2,2,2,14,10,10,10,10,13,2,2,2,2,2,2,2,2,14,10,10,10}\n_[21]={13,2,2,2,2,3,-1,-1,-1,-1,-1,-1,1,3,-1,-1,-1,1,2,2,3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1,2,2,2,2,3,-1,-1,-1,-1,-1,-1,-1,-1,1,2,2,2}\n_[20]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}\n_[19]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}\n_[18]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}\n_[17]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}\n_[16]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,17,18}\n_[15]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,51,52,52,52,55,10}\n_[14]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1,14}\n_[13]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[12]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[11]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[10]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[9]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[8]={11,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9}\n_[7]={5,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,6}\n_[6]={_[87],_[88],_[89],_[90],_[91],_[92],_[93],_[94]}\n_[5]={_[23],_[24],_[25],_[26],_[27],_[28],_[29],_[30],_[31],_[32],_[33],_[34],_[35],_[36],_[37],_[38],_[39],_[40],_[41],_[42],_[43],_[44],_[45],_[46],_[47],_[48],_[49],_[50],_[51],_[52],_[53],_[54],_[55],_[56],_[57],_[58],_[59],_[60],_[61],_[62],_[63],_[64],_[65],_[66],_[67],_[68],_[69],_[70],_[71],_[72],_[73],_[74],_[75],_[76],_[77],_[78],_[79],_[80],_[81],_[82],_[83],_[84],_[85],_[86]}\n_[4]={_[7],_[8],_[9],_[10],_[11],_[12],_[13],_[14],_[15],_[16],_[17],_[18],_[19],_[20],_[21],_[22]}\n_[3]={type=\"Entity\",name=\"bora\",entities=_[6]}\n_[2]={tiles=_[4],type=\"Tile\",tileset=\"forest\",name=\"teste\",quads=_[5]}\n_[1]={_[2],_[3]}\nreturn {tilew=16,layers=_[1],tileh=16,height=16,name=\"opaaa\",width=52}",
+			"file": "src/assets/tilemaps/opaaa.lua",
+			"file_size": 5157,
+			"file_write_time": 132139999936181293,
+			"settings":
+			{
+				"buffer_size": 5157,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
@@ -348,7 +546,7 @@
 			"file": "src/pixcof/tilemap.lua",
 			"settings":
 			{
-				"buffer_size": 12288,
+				"buffer_size": 12289,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -357,7 +555,16 @@
 			"file": "src/objects/enemy.lua",
 			"settings":
 			{
-				"buffer_size": 91,
+				"buffer_size": 90,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/objects/dolphin.lua",
+			"settings":
+			{
+				"buffer_size": 402,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -366,7 +573,7 @@
 			"file": "src/objects/boto.lua",
 			"settings":
 			{
-				"buffer_size": 369,
+				"buffer_size": 487,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -382,7 +589,16 @@
 			"file": "src/pixcof/editors/init.lua",
 			"settings":
 			{
-				"buffer_size": 359,
+				"buffer_size": 361,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/editors/animationeditor-old.lua",
+			"settings":
+			{
+				"buffer_size": 10449,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -391,7 +607,7 @@
 			"file": "src/pixcof/editors/editor.lua",
 			"settings":
 			{
-				"buffer_size": 289,
+				"buffer_size": 287,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -400,19 +616,10 @@
 			"file": "src/pixcof/game.lua",
 			"settings":
 			{
-				"buffer_size": 274,
+				"buffer_size": 273,
 				"encoding": "UTF-8",
 				"line_ending": "Unix",
 				"name": "local Class = require(\"pixcof.class\")"
-			}
-		},
-		{
-			"file": "pixcof.sublime-project",
-			"settings":
-			{
-				"buffer_size": 267,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
 			}
 		},
 		{
@@ -616,14 +823,43 @@
 		"/home/canoi/Documentos/Projects/pixel-coffee",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets/animations",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets/tilemaps",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets/tilesets",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/objects",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof",
-		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors"
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/components",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/layers",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/viewers"
 	],
 	"file_history":
 	[
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets/tilemaps/vulcan.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/pixcof.sublime-project",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/layers/layer.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/layers/tilemaplayer.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/layers/init.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/objects/player.lua",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/animation.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/libs/lume.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets/tilemaps/testando.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets/animations/dolphin.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/scenemanager.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/resources.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/scene.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/viewers/fontviewer.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/viewers/imageviewer.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors/animationeditor-old.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors/animationeditor.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/layers/entitylayer.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/objects/dolphin.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/viewers/viewer.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/viewers/resourcesviewer.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets/animations/knight2.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets/animations/knight.lua",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors/resourcesviewer.lua",
+		"/home/canoi/Documentos/Projects/love2d/TestImGui/main.lua",
 		"/home/canoi/.themes/Vaporwave-old/index.theme",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors/sceneeditor.lua",
 		"/home/canoi/.themes/Vaporwave-new/index.theme",
@@ -656,7 +892,6 @@
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors/resources.lua",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors/editor.lua",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/init.lua",
-		"/home/canoi/Documentos/Projects/pixel-coffee/src/objects/player.lua",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors/init.lua",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/main.lua",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/objects/boto.lua",
@@ -667,9 +902,6 @@
 		"/home/canoi/Documentos/Projects/pixel-coffee/package.json",
 		"/home/canoi/Documentos/Projects/love-typescript-template/game/pixcof/debug.lua",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/entity.lua",
-		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/scenemanager.lua",
-		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/scene.lua",
-		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/resources.lua",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/scenes/gamescene.lua",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/game.lua",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/objects/enemy.lua",
@@ -706,7 +938,6 @@
 		"/home/canoi/LoveTS/src/conf.ts",
 		"/home/canoi/LoveTS/typings/lume.d.ts",
 		"/home/canoi/TestTSToLua/src/conf.ts",
-		"/home/canoi/Documentos/Projects/love2d/TestImGui/main.lua",
 		"/home/canoi/maximus/config",
 		"/home/canoi/maximus/configure",
 		"/home/canoi/NewKnightvania/Assets/testemenor.lua",
@@ -731,26 +962,7 @@
 		"/home/canoi/Documentos/Freelas/puzzle game/src/systems/scenemanager.moon",
 		"/home/canoi/Documentos/Freelas/puzzle game/src/scenes/gamescene.moon",
 		"/home/canoi/Documentos/Freelas/puzzle game/game/scenes/scene.lua",
-		"/home/canoi/Documentos/Freelas/puzzle game/src/conf.moon",
-		"/home/canoi/Documentos/Freelas/puzzle game/src/engine.moon",
-		"/home/canoi/Documentos/Freelas/puzzle game/build/README.md",
-		"/home/canoi/Documentos/Freelas/puzzle game/src/settings.moon",
-		"/home/canoi/Documentos/Freelas/puzzle game/src/scenes/scene.moon",
-		"/home/canoi/Documentos/Freelas/puzzle game/game/lib/suit/core.lua",
-		"/home/canoi/Documentos/Freelas/puzzle game/src/objects/checkbutton.moon",
-		"/home/canoi/Documentos/Freelas/puzzle game/game/objects/button.lua",
-		"/home/canoi/.cache/.fr-ueSGAz/GitHub.tmTheme",
-		"/home/canoi/.config/sublime-text-3/Github Color Theme.sublime-package_FILES/GitHub.tmTheme",
-		"/home/canoi/Documentos/Freelas/puzzle game/game/lib/lume.lua",
-		"/home/canoi/Documentos/Freelas/puzzle game/src/system/scenemanager.moon",
-		"/home/canoi/Documentos/Freelas/puzzle game/src/scene/scene.moon",
-		"/home/canoi/Documentos/gamedev/moonscript engine/game/main.lua",
-		"/home/canoi/Documentos/gamedev/moonscript engine/game/resources.lua",
-		"/home/canoi/Documentos/gamedev/moonscript engine/scenes/scene.moon",
-		"/home/canoi/Documentos/gamedev/moonscript engine/resources.moon",
-		"/home/canoi/Documentos/gamedev/moonscript engine/main.moon",
-		"/home/canoi/Documentos/Freelas/jogo nave/game/objects/powerup.lua",
-		"/home/canoi/Documentos/Freelas/jogo nave/game/conf.lua"
+		"/home/canoi/Documentos/Freelas/puzzle game/src/conf.moon"
 	],
 	"find":
 	{
@@ -758,9 +970,10 @@
 	},
 	"find_in_files":
 	{
-		"height": 104.0,
+		"height": 134.0,
 		"where_history":
 		[
+			""
 		]
 	},
 	"find_state":
@@ -768,6 +981,34 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"textin",
+			"print",
+			"newlayer",
+			"layer",
+			"newlayer",
+			"extends",
+			"begin",
+			"new layer",
+			"then",
+			"newTilemap",
+			"save",
+			"begin",
+			"push",
+			"begintab",
+			"tabitem",
+			"tab",
+			"save",
+			"anykeydown",
+			"self.tilemap",
+			"self.viewer",
+			"viewer.camera",
+			"self.viewer.wid",
+			"},\n",
+			"Doc",
+			"Dock",
+			"dock",
+			"column",
+			"windowflags",
 			"angle",
 			"treenode",
 			"treenodeex",
@@ -788,6 +1029,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"extend",
+			"tilemap.camera",
 			"TilesetEditor",
 			"AnimationEditor",
 			"ResourcesViewer",
@@ -802,7 +1045,7 @@
 	"groups":
 	[
 		{
-			"selected": 6,
+			"selected": 26,
 			"sheets":
 			[
 				{
@@ -811,15 +1054,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 353,
+						"buffer_size": 861,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								216,
-								216
+								455,
+								455
 							]
 						],
 						"settings":
@@ -827,10 +1070,10 @@
 							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 159.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 19,
+					"stack_index": 29,
 					"type": "text"
 				},
 				{
@@ -839,15 +1082,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1236,
+						"buffer_size": 1375,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								153,
-								153
+								1132,
+								1132
 							]
 						],
 						"settings":
@@ -856,10 +1099,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 331.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 17,
+					"stack_index": 40,
 					"type": "text"
 				},
 				{
@@ -868,15 +1111,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1220,
+						"buffer_size": 2601,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1201,
-								1201
+								2180,
+								2180
 							]
 						],
 						"settings":
@@ -884,14 +1127,100 @@
 							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 231.0,
+						"translation.y": 733.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
+					"file": "src/pixcof/components/spritecomponent.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1818,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								335,
+								335
+							]
+						],
+						"settings":
+						{
+							"auto_name": "",
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/pixcof/components/component.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 283,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								233,
+								233
+							]
+						],
+						"settings":
+						{
+							"auto_name": "",
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 12,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "src/objects/player.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 349,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								260,
+								260
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 13,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
 					"file": "src/main.lua",
 					"semi_transient": false,
 					"settings":
@@ -915,110 +1244,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 22,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "src/pixcof/debug.lua",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2477,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								837,
-								837
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 117.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "src/pixcof/editors/tileseteditor.lua",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 12257,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3245,
-								3245
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 2326.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "src/pixcof/editors/sceneeditor.lua",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 17977,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								10122,
-								10122
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 4337.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
+					"stack_index": 42,
 					"type": "text"
 				},
 				{
 					"buffer": 7,
-					"file": "src/pixcof/editors/resourcesviewer.lua",
+					"file": "src/pixcof/debug.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3979,
+						"buffer_size": 3165,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								227,
-								227
+								1027,
+								1027
 							]
 						],
 						"settings":
@@ -1027,172 +1270,113 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 785.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 21,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
 					"buffer": 8,
-					"file": "src/pixcof/editors/animationeditor.lua",
+					"file": "/home/canoi/Documentos/Projects/love2d/TestImGui/main.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 10380,
+						"buffer_size": 1550,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								330,
-								330
+								154,
+								154
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2002.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 26,
+					"stack_index": 43,
 					"type": "text"
 				},
 				{
 					"buffer": 9,
-					"file": "src/pixcof/scenemanager.lua",
+					"file": "src/pixcof/viewers/init.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1058,
+						"buffer_size": 225,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								599,
-								599
+								205,
+								205
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 841.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 11,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "src/pixcof/resources.lua",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5206,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1451,
-								1451
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 222.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 12,
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "src/pixcof/scene.lua",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2506,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								204,
-								204
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 3.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 15,
-					"type": "text"
-				},
-				{
-					"buffer": 12,
-					"file": "src/objects/player.lua",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 589,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								569,
-								569
-							]
-						],
-						"settings":
-						{
-							"auto_name": "",
 							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 24,
 					"type": "text"
 				},
 				{
-					"buffer": 13,
-					"file": "src/pixcof/animation.lua",
+					"buffer": 10,
+					"file": "src/pixcof/editors/tileseteditor-old.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1796,
+						"buffer_size": 12256,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1752,
-								1752
+								3244,
+								3244
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 2254.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 31,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "src/pixcof/editors/sceneeditor.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 17555,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10615,
+								10620
 							]
 						],
 						"settings":
@@ -1201,49 +1385,47 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 787.0,
+						"translation.y": 4339.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 14,
-					"file": "src/pixcof/libs/lume.lua",
+					"buffer": 12,
+					"file": "src/pixcof/layers/backgroundlayer.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 15784,
+						"buffer_size": 2023,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								12169,
-								12169
+								905,
+								905
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 8574.0,
+						"translation.y": 154.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 23,
 					"type": "text"
 				},
 				{
-					"buffer": 15,
-					"file": "src/assets/tilemaps/testando.lua",
+					"buffer": 13,
+					"file": "src/assets/tilesets/vulcan.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1798,
+						"buffer_size": 570,
 						"regions":
 						{
 						},
@@ -1266,7 +1448,711 @@
 					"type": "text"
 				},
 				{
+					"buffer": 14,
+					"file": "src/pixcof/viewers/resourcesviewer.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11128,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								764,
+								764
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1956.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 19,
+					"type": "text"
+				},
+				{
+					"buffer": 15,
+					"file": "src/pixcof/viewers/fontviewer.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1015,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								80,
+								80
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 33,
+					"type": "text"
+				},
+				{
 					"buffer": 16,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7775,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										226,
+										232
+									],
+									[
+										491,
+										497
+									],
+									[
+										760,
+										766
+									],
+									[
+										972,
+										978
+									],
+									[
+										1162,
+										1168
+									],
+									[
+										1444,
+										1450
+									],
+									[
+										1632,
+										1638
+									],
+									[
+										1932,
+										1938
+									],
+									[
+										2188,
+										2194
+									],
+									[
+										2392,
+										2398
+									],
+									[
+										2646,
+										2652
+									],
+									[
+										2912,
+										2918
+									],
+									[
+										3176,
+										3182
+									],
+									[
+										3472,
+										3478
+									],
+									[
+										3739,
+										3745
+									],
+									[
+										4107,
+										4114
+									],
+									[
+										4373,
+										4380
+									],
+									[
+										4643,
+										4650
+									],
+									[
+										4856,
+										4863
+									],
+									[
+										5047,
+										5054
+									],
+									[
+										5330,
+										5337
+									],
+									[
+										5519,
+										5526
+									],
+									[
+										5820,
+										5827
+									],
+									[
+										6077,
+										6084
+									],
+									[
+										6282,
+										6289
+									],
+									[
+										6537,
+										6544
+									],
+									[
+										6804,
+										6811
+									],
+									[
+										7069,
+										7076
+									],
+									[
+										7366,
+										7373
+									],
+									[
+										7634,
+										7641
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								3881,
+								3881
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"line_numbers": false,
+							"output_tag": 2,
+							"result_base_dir": "",
+							"result_file_regex": "^([^ \t].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 1456.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 32,
+					"type": "text"
+				},
+				{
+					"buffer": 17,
+					"file": "src/pixcof/viewers/imageviewer.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 551,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								81,
+								81
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 34,
+					"type": "text"
+				},
+				{
+					"buffer": 18,
+					"file": "src/objects/camaleao.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 616,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								470,
+								470
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 16,
+					"type": "text"
+				},
+				{
+					"buffer": 19,
+					"file": "src/pixcof/animation.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2750,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								477,
+								477
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 20,
+					"file": "src/assets/animations/boto.lua",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 173,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 17,
+					"type": "text"
+				},
+				{
+					"buffer": 21,
+					"file": "src/pixcof/editors/animationeditor.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7298,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								131,
+								131
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 25,
+					"type": "text"
+				},
+				{
+					"buffer": 22,
+					"file": "src/pixcof/editors/tileseteditor.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11528,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								170,
+								170
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 36,
+					"type": "text"
+				},
+				{
+					"buffer": 23,
+					"file": "src/pixcof/resources.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5304,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5064,
+								5064
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2577.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 18,
+					"type": "text"
+				},
+				{
+					"buffer": 24,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"default_dir": "/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 44,
+					"type": "text"
+				},
+				{
+					"buffer": 25,
+					"file": "src/pixcof/input.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2071,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1947,
+								1947
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 845.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 41,
+					"type": "text"
+				},
+				{
+					"buffer": 26,
+					"file": "src/pixcof/layers/entitylayer.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3717,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1694,
+								1694
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 537.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 27,
+					"file": "src/pixcof/layers/tilemaplayer.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9548,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4024,
+								4024
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1183.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 20,
+					"type": "text"
+				},
+				{
+					"buffer": 28,
+					"file": "src/assets/tilesets/dungeon.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1752,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 624.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 21,
+					"type": "text"
+				},
+				{
+					"buffer": 29,
+					"file": "src/pixcof/viewers/viewer.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 228,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								65,
+								65
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 35,
+					"type": "text"
+				},
+				{
+					"buffer": 30,
+					"file": "src/pixcof/tileset.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1819,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								162,
+								162
+							]
+						],
+						"settings":
+						{
+							"auto_name": "",
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 26,
+					"type": "text"
+				},
+				{
+					"buffer": 31,
+					"file": "src/pixcof/scene.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8719,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4774,
+								4774
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1831.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 32,
+					"file": "src/pixcof/layers/layer.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 465,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								363,
+								363
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 33,
+					"file": "src/pixcof/layers/init.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 232,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								212,
+								212
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 28,
+					"type": "text"
+				},
+				{
+					"buffer": 34,
 					"file": "/home/canoi/Documentos/Projects/love-typescript-template/typings/imgui.d.ts",
 					"semi_transient": false,
 					"settings":
@@ -1278,8 +2164,8 @@
 						"selection":
 						[
 							[
-								14664,
-								14664
+								31488,
+								31488
 							]
 						],
 						"settings":
@@ -1290,14 +2176,43 @@
 							"use_tab_stops": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3337.0,
+						"translation.y": 7833.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
-					"buffer": 17,
+					"buffer": 35,
+					"file": "/home/canoi/Documentos/Projects/Frameworks/pixel-coffee/src/pixcof/debug.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 17033,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3803,
+								3803
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2287.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 30,
+					"type": "text"
+				},
+				{
+					"buffer": 36,
 					"file": "README.md",
 					"semi_transient": false,
 					"settings":
@@ -1321,11 +2236,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 25,
+					"stack_index": 49,
 					"type": "text"
 				},
 				{
-					"buffer": 18,
+					"buffer": 37,
 					"file": "src/assets/tilesets/forest.lua",
 					"semi_transient": false,
 					"settings":
@@ -1346,27 +2261,27 @@
 							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 561.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 24,
+					"stack_index": 22,
 					"type": "text"
 				},
 				{
-					"buffer": 19,
-					"file": "src/assets/tilemaps/opaaa.lua",
+					"buffer": 38,
+					"file": "src/assets/tilemaps/forest.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3234,
+						"buffer_size": 3587,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								110,
-								110
+								731,
+								731
 							]
 						],
 						"settings":
@@ -1374,27 +2289,83 @@
 							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 243.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 16,
+					"stack_index": 45,
 					"type": "text"
 				},
 				{
-					"buffer": 20,
-					"file": "src/pixcof/tilemap.lua",
+					"buffer": 39,
+					"file": "src/assets/tilemaps/novooooo.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 12288,
+						"buffer_size": 33973,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4832,
-								4832
+								31868,
+								31868
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 1271.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 47,
+					"type": "text"
+				},
+				{
+					"buffer": 40,
+					"file": "src/assets/tilemaps/opaaa.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5157,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3200,
+								3200
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 46,
+					"type": "text"
+				},
+				{
+					"buffer": 41,
+					"file": "src/pixcof/tilemap.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 12289,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								11111,
+								11111
 							]
 						],
 						"settings":
@@ -1403,55 +2374,83 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2060.0,
+						"translation.y": 6016.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 27,
+					"type": "text"
+				},
+				{
+					"buffer": 42,
+					"file": "src/objects/enemy.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 90,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								90,
+								90
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				},
+				{
+					"buffer": 43,
+					"file": "src/objects/dolphin.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 402,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								312,
+								312
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 14,
 					"type": "text"
 				},
 				{
-					"buffer": 21,
-					"file": "src/objects/enemy.lua",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 91,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								91,
-								91
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 22,
+					"buffer": 44,
 					"file": "src/objects/boto.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 369,
+						"buffer_size": 487,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								323,
-								323
+								431,
+								431
 							]
 						],
 						"settings":
@@ -1462,11 +2461,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 15,
 					"type": "text"
 				},
 				{
-					"buffer": 23,
+					"buffer": 45,
 					"semi_transient": false,
 					"settings":
 					{
@@ -1490,24 +2489,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 13,
+					"stack_index": 48,
 					"type": "text"
 				},
 				{
-					"buffer": 24,
+					"buffer": 46,
 					"file": "src/pixcof/editors/init.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 359,
+						"buffer_size": 361,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								339,
-								339
+								204,
+								204
 							]
 						],
 						"settings":
@@ -1518,24 +2517,53 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 20,
+					"stack_index": 38,
 					"type": "text"
 				},
 				{
-					"buffer": 25,
+					"buffer": 47,
+					"file": "src/pixcof/editors/animationeditor-old.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 10449,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								219,
+								219
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 37,
+					"type": "text"
+				},
+				{
+					"buffer": 48,
 					"file": "src/pixcof/editors/editor.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 289,
+						"buffer_size": 287,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								190,
-								190
+								65,
+								65
 							]
 						],
 						"settings":
@@ -1546,24 +2574,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 18,
+					"stack_index": 39,
 					"type": "text"
 				},
 				{
-					"buffer": 26,
+					"buffer": 49,
 					"file": "src/pixcof/game.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 274,
+						"buffer_size": 273,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								256,
-								256
+								255,
+								255
 							]
 						],
 						"settings":
@@ -1575,40 +2603,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
-					"buffer": 27,
-					"file": "pixcof.sublime-project",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 267,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								256,
-								256
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 27,
-					"type": "text"
-				},
-				{
-					"buffer": 28,
+					"buffer": 50,
 					"file": "package.json",
 					"semi_transient": false,
 					"settings":
@@ -1634,7 +2633,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 28,
+					"stack_index": 50,
 					"type": "text"
 				}
 			]
@@ -1677,7 +2676,7 @@
 	},
 	"output.exec":
 	{
-		"height": 122.0
+		"height": 108.0
 	},
 	"output.find_results":
 	{

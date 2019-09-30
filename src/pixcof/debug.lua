@@ -1,7 +1,9 @@
 local Class = require("pixcof.class")
-local Debug = Class:extends("Debug")
+local Debug = Class:extend("Debug")
 local Editors = require("pixcof.editors")
+local Viewers = require("pixcof.viewers")
 local SceneManager = require("pixcof.scenemanager")
+local Input = require("pixcof.input")
 
 function Debug:constructor()
 	self.log = ""
@@ -13,10 +15,16 @@ function Debug:constructor()
 
 	self.editors = {
 		scene = Editors.SceneEditor:new(self),
-		animation = Editors.AnimationEditor:new(),
-		tileset = Editors.TilesetEditor:new(self),
-		resources = Editors.ResourcesViewer:new()
+		--[[animation = Editors.AnimationEditor:new(),
+		tileset = Editors.TilesetEditor:new(self),]]
+		resources = Viewers.ResourcesViewer:new(self)
 	}
+end
+
+function Debug:openMap(map)
+	if self.editors.scene then 
+		self.editors.scene:openMap(map)
+	end
 end
 
 function Debug:update(dt)
@@ -27,6 +35,8 @@ function Debug:update(dt)
 	for k,editor in pairs(editors_open) do
 		editor:update(dt)
 	end
+
+	--print(lk:Scancode)
 end
 
 function Debug:beginDraw()
@@ -64,13 +74,19 @@ end
 
 function Debug:draw() 
 	self:beginDraw()
-	local editors_open = lume.filter(self.editors, function(x) return x.open end)
-	for k,editor in pairs(editors_open) do
-		editor:draw()
-	end
+	imgui.SetNextWindowPos(0, 0)
+    imgui.SetNextWindowSize(love.graphics.getWidth(), love.graphics.getHeight())
+	if imgui.Begin("DockArea", nil, { "ImGuiWindowFlags_NoTitleBar", "ImGuiWindowFlags_NoResize", "ImGuiWindowFlags_NoMove", "ImGuiWindowFlags_NoBringToFrontOnFocus" }) then
+    	imgui.BeginDockspace()
+		local editors_open = lume.filter(self.editors, function(x) return x.open end)
+		for k,editor in pairs(editors_open) do
+			editor:draw()
+		end
 
 	--SceneManager:draw()
-
+		imgui.EndDockspace()
+		imgui.End()
+	end
 	self:endDraw()
 end
 
@@ -97,15 +113,19 @@ function Debug:initImGui()
 
 	love.mousepressed = function(x, y, button)
 	    imgui.MousePressed(button)
+	    --Input:mousepressed(x, y, button)
 	end
 
 	love.mousereleased = function(x, y, button)
 	    imgui.MouseReleased(button)
+	    --Input:mousereleased(x, y, button)
 	end
 
 	love.wheelmoved = function(x, y)
 	    imgui.WheelMoved(y)
-	    self.editors.scene:wheelmoved(x, y)
+	    if self.editors.scene then
+		    self.editors.scene:wheelmoved(x, y)
+		end
 	end
 	self:Log("ImGui started <3")
 end

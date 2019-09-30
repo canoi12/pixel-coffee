@@ -1,18 +1,19 @@
 local Class = require("pixcof.class")
 local Resources = require("pixcof.resources")
 local lume = require("pixcof.libs.lume")
-local Animation = Class:extends("Animation")
+local Animation = Class:extend("Animation")
 
 function Animation:constructor(name, speed)
 	self.anim = Resources:getAnimation(name)
+	self.name = self.anim.name
 	self.image = Resources:getImage(self.anim.image)
 	self.width = self.anim.tilew
 	self.height = self.anim.tileh
 	self.quads = {}
 
-	self.frame = 1
+	self.frame = 0
 	self.speed = 1
-	self.initial_speed = speed or 1
+	self.initial_speed = speed or 8
 	self.currentAnimation = ""
 
 	self.animations = {}
@@ -41,9 +42,12 @@ end
 
 function Animation:setAnimation(name)
 	local keys = lume.keys(self.animations)
+	if name == self.currentAnimation then return name end
 	if lume.find(keys, name) then
-		print(name)
-		self.current_animation = name
+		--print(name)
+		self.currentAnimation = name
+		self.frame = self.animations[self.currentAnimation].start_frame
+		return name
 	end
 end
 
@@ -54,9 +58,22 @@ function Animation:update(dt)
 		self.frame = self.frame + 1
 	end
 	
+	--print(self.frame, self.animations[self.currentAnimation].end_frame)
 	if self.frame > self.animations[self.currentAnimation].end_frame then
+		--print(self.frame)
 		self.frame = self.animations[self.currentAnimation].start_frame
 	end
+end
+
+function Animation:drawEntity(entity)
+	x = entity.x or 0
+	y = entity.y or 0
+	angle = entity.angle or 0
+	sx = entity.scale.x or 1
+	sy = entity.scale.y or 1
+	cx = entity.origin.x or 0
+	cy = entity.origin.y or 0
+	love.graphics.draw(self.image, self.quads[self.frame+1], x, y, angle, sx, sy, cx, cy)
 end
 
 function Animation:draw(x, y, angle, sx, sy, cx, cy)
@@ -68,6 +85,28 @@ function Animation:draw(x, y, angle, sx, sy, cx, cy)
 	cx = cx or 0
 	cy = cy or 0
 	love.graphics.draw(self.image, self.quads[self.frame+1], x, y, angle, sx, sy, cx, cy)
+end
+
+function Animation:toTable()
+	local anim = {}
+	anim.name = self.name
+	anim.tilew = self.width
+	anim.tileh = self.height
+	anim.image = self.anim.image
+	anim.quads = self.anim.quads
+	anim.animations = self.anim.animations
+	return anim
+end
+
+function Animation:generateTable(animation)
+	local anim = {}
+	anim.name = animation.name
+	anim.tilew = animation.width
+	anim.tileh = animation.height
+	anim.image = animation.image
+	anim.quads = animation.quads or {}
+	anim.animations = animation.animations or {}
+	return anim
 end
 
 return Animation

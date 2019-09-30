@@ -1,5 +1,5 @@
 io.stdout:setvbuf("no")
-require "imgui"
+imgui = require "imgui"
 lume = require("pixcof.libs.lume")
 lurker = require("pixcof.libs.lurker")
 local __pixcof = {}
@@ -13,6 +13,7 @@ __pixcof.Animation = require("pixcof.animation")
 __pixcof.Tilemap = require("pixcof.tilemap")
 __pixcof.Scene = require("pixcof.scene")
 __pixcof.SceneManager = require("pixcof.scenemanager")
+__pixcof.Input = require("pixcof.input")
 
 __pixcof.Mode = {}
 
@@ -21,6 +22,7 @@ __pixcof.init = function(args)
 	love.window.setMode(1280, 720, {fullscreen = false, fullscreentype="desktop", resizable = true})
 	__pixcof.loveShortcuts()
 	__pixcof.Resources:init()
+	__pixcof.Input:init()
 	if args[1] == "-debug" then
 		__pixcof.Mode = __pixcof.Debug:new()
 		__pixcof.Mode:initImGui()
@@ -36,7 +38,10 @@ __pixcof.loveShortcuts = function()
 	lk = love.keyboard
 end
 
-__pixcof.update = function(dt) 
+__pixcof.update = function(dt)
+	--print(3 | 5)
+	--print(__pixcof.Debug)
+	__pixcof.Input:update(dt)
 	__pixcof.Mode:update(dt)
 	lurker.update(dt)
 end

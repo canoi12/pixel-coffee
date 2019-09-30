@@ -1,4 +1,4 @@
 local Entity = require("pixcof.entity")
-local Enemy = Entity:extends("Enemy")
+local Enemy = Entity:extend("Enemy")
 
 return Enemy

@@ -8,6 +8,6 @@
   "license": "MIT",
   "scripts": {
   	"test": "love src -debug",
-    "run": "love src"
+    "start": "love src"
   }
 }

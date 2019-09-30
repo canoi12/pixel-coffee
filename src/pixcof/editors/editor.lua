@@ -1,8 +1,8 @@
 local Class = require("pixcof.class")
-local Editor = Class:extends("Editor")
+local Editor = Class:extend("Editor")
 
 function Editor:constructor(debug) 
-	self.open = false
+	self.open = true
 	self.debug = debug or {}
 end
 

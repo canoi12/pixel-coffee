@@ -67,7 +67,7 @@ end
 function Resources:loadObject(path)
   local path = lume.split(path, ".")[1]
   local robject = require(self.objectsPath .. path)
-  self.objects[robject.name] = robject
+  self.objects[robject.__class] = robject
 end
 
 function Resources:loadFont(name, path, size)
@@ -152,6 +152,7 @@ function Resources:saveAnimation(name, animation)
 	local f = io.open("src/" .. animation_path .. name .. ".lua", "w")
 	f:write(data)
 	f:close()
+	self.animations[name] = animation
 end
 
 function Resources:saveTileset(name, tileset)
@@ -180,17 +181,19 @@ function Resources:saveTilemap(name, tilemap)
 end
 
 function Resources:removeAnimation(name)
-	local animation_path = "assets/tilesets/"
-	print(animation_path .. name .. ".lua")
+	local animation_path = "assets/animations/"
+	--print(animation_path .. name .. ".lua")
 	if not love.filesystem.getInfo(animation_path .. name .. ".lua") then
 		return
 	end
 	os.remove("src/" .. animation_path .. name .. ".lua")
+	self.animations[name] = nil
+	--self:loadAnimations()
 end
 
 function Resources:removeTileset(name)
 	local tileset_path = "assets/tilesets/"
-	print(tileset_path .. name .. ".lua")
+	--print(tileset_path .. name .. ".lua")
 	if not love.filesystem.getInfo(tileset_path .. name .. ".lua") then
 		return
 	end

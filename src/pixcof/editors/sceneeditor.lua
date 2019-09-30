@@ -1,11 +1,13 @@
 local Editor = require("pixcof.editors.editor")
+local Input = require("pixcof.input")
 local Tilemap = require("pixcof.tilemap")
 local Resources = require("pixcof.resources")
-local SceneEditor = Editor:extends("SceneEditor")
+local SceneEditor = Editor:extend("SceneEditor")
 local SceneManager = require("pixcof.scenemanager")
 local Scene = require("pixcof.scene")
 
 local camera = {x = 0, y = 0}
+local entity_pos = {x = 0, y = 0}
 local moveCamera = false
 
 function SceneEditor:constructor(debug)
@@ -15,6 +17,12 @@ function SceneEditor:constructor(debug)
 	self.image = love.graphics.newImage("pixcof/assets/images/bgeditor.jpg")
 	self.image:setFilter("nearest", "nearest")
 	self.image:setWrap("repeat", "repeat")
+
+	self.layersTypes = {"Tile", "Entity", "Background"}
+
+	self.popups = {
+		layer = false
+	}
 
 
 	self.tilemapEdit = {
@@ -28,7 +36,8 @@ function SceneEditor:constructor(debug)
 	self.layerEdit = {
 		name = "",
 		type = "",
-		oldName = ""
+		oldName = "",
+		tileset = ""
 	}
 
 	self.firstOpen = true
@@ -42,7 +51,7 @@ function SceneEditor:constructor(debug)
 		autotile = false,
 		autotileType = 1,
 		currentEntity = nil,
-		activeEntity = nil
+		activeEntity = {}
 	}
 
 	self.width = 16
@@ -73,307 +82,304 @@ function SceneEditor:update(dt)
 	SceneManager:update(dt)
 end
 
+function SceneEditor:openMap(map)
+	local scene = Scene:new(map.name)
+	SceneManager:changeScene(scene)
+	self.tilemap = scene
+end
+
 function SceneEditor:draw()
 	local ww, wh = lg.getDimensions()
 	local layer = self.tilemap.layers[self.currentLayer] or {name="", type=""}
-	--print(ww, wh)
-	imgui.SetNextWindowSize(ww, wh)
-	imgui.SetNextWindowPos(0, 16)
+
 	self.map.width, self.map.height = self.tilemap.width, self.tilemap.height
-	self.map.tilewidth, self.map.tileheight = self.tilemap.tileset.tilew, self.tilemap.tileset.tileh
-	if imgui.Begin("Scene Editor", nil, {"ImGuiWindowFlags_NoMove", "ImGuiWindowFlags_NoResize", "ImGuiWindowFlags_NoTitleBar", "ImGuiWindowFlags_NoBringToFrontOnFocus"}) then
-		imgui.Columns(3)
-		local cw = ww/6
-		if self.firstOpen then
-			imgui.SetColumnWidth(0, cw)
-			imgui.SetColumnWidth(1, cw*4)
-			imgui.SetColumnWidth(2, cw)
-			self.firstOpen = false
-		end
-		if imgui.BeginChild("Scene Props") then
-			imgui.Text("Scenes")
-			local colw = imgui.GetWindowWidth()
-			if imgui.BeginChildFrame(11, colw, 128) then
-				for k,tilemap in pairs(Resources.tilemaps) do
-					if imgui.SmallButton("x##tilemap_remove_" .. k) then Resources:removeTilemap(k) end
-					imgui.SameLine()
-					if imgui.SmallButton("..##tilemap_edit_" .. k) then 
-						imgui.OpenPopup("Edit Tilemap")
-						self.tilemapEdit.ref = tilemap
-						self.tilemapEdit.name = tilemap.name
-						self.tilemapEdit.tileset = tilemap.tileset
-						self.tilemapEdit.width = tilemap.width
-						self.tilemapEdit.height = tilemap.height
-						self.tilemapEdit.oldName = tilemap.name
-					end
-					imgui.SameLine()
-					if imgui.Selectable(tilemap.name, tilemap.name == self.tilemap.name) then 
-						local scene = Scene:new(tilemap.name)
-						SceneManager:changeScene(scene)
-						self.tilemap = scene.tilemap
-					end
-				end
-				imgui.EndChildFrame()
-			end
+	self.map.tilewidth, self.map.tileheight = self.tilemap.tilew or 16, self.tilemap.tileh or 16
 
-			if imgui.SmallButton("new") then 
-				imgui.OpenPopup("New Tilemap")
-				self.tilemapEdit.name = ""
-				self.tilemapEdit.tileset = ""
-				self.tilemapEdit.width = 16
-				self.tilemapEdit.height = 16
-				self.tilemapEdit.oldName = ""
-			end
-			imgui.SameLine()
-			if imgui.SmallButton("save") then
-				for k,tilemap in pairs(Resources.tilemaps) do self:saveTilemap(tilemap) end
-				self:saveTilemap()
-			end
-
-			imgui.Separator()
-
-			imgui.Text("Layers")
-			local keys = lume.map(self.tilemap.layers, function(x) return x.name end)
-			if imgui.BeginChildFrame(10, colw, 128) then
-				--imgui.ListBox("##layers", 1, keys, #keys)
-				for i,layer in ipairs(self.tilemap.layers) do 
-					if imgui.SmallButton("x##remove_layer_" .. layer.name) then 
-						self.tilemap:removeLayer(i)
-					end
-					imgui.SameLine()
-					local btn_char = "o"
-					if not layer.active then btn_char = "-" end
-					if imgui.SmallButton(btn_char .. "##hide_layer_" .. layer.name) then 
-						layer.active = not layer.active
-					end
-					imgui.SameLine()
-					if imgui.Selectable(layer.name .. " # " .. layer.type, i == self.currentLayer) then 
-						self.currentLayer = i
-					end
-				end
-				imgui.EndChildFrame()
-			end
-
-			--[[if imgui.SmallButton("+ tile layer") then self.tilemap:addLayer(nil, "Tile") end
-			imgui.SameLine()
-			if imgui.SmallButton("+ entity layer") then self.tilemap:addLayer(nil, "Entity") end]]
-			if imgui.SmallButton("new layer") then 
-				imgui.OpenPopup("New Layer")
-				self.layerEdit.name = ""
-			end
-
-			self:newTilemap()
-			self:editTilemap()
-			self:newLayer()
-
-			imgui.EndChild()
-
-		end
-
-		--if change then self:resizeCanvas() end
-		self:resizeCanvas()
-		imgui.NextColumn()
-
-		if imgui.BeginChild("Scene Viewer") then
+	local cw = ww/6
 		
-			local wpos = {imgui.GetWindowPos()}
-			self.viewer.width, self.viewer.height = imgui.GetWindowSize()
-			local umpos = {imgui.GetMousePos()}
-			--local mpos = {}
-			umpos[1] = umpos[1] - wpos[1]
-			umpos[2] = umpos[2] - wpos[2]
-			local mpos = {
-				math.floor((umpos[1]-self.viewer.camera.x)/(self.map.tilewidth*self.viewer.zoom))*self.map.tilewidth,
-				math.floor((umpos[2]-self.viewer.camera.y)/(self.map.tileheight*self.viewer.zoom))*self.map.tileheight
-			}
+	self:resizeCanvas()
 
-			umpos[1] = (umpos[1] - self.viewer.camera.x)/self.viewer.zoom
-			umpos[2] = (umpos[2] - self.viewer.camera.y)/self.viewer.zoom
+	imgui.SetNextDock("ImGuiDockSlot_Left")
+	imgui.SetNextDockSplitRatio(0.8, 0.2)
 
-			local tpos = {
-				mpos[1]/self.map.tilewidth,
-				mpos[2]/self.map.tileheight
-			}
+	--imgui.PushID(2121)
 
-			local dpos = {imgui.GetMouseDragDelta(0)}
+	if imgui.BeginDock("Scene Viewer##scene_viewer") then
+		local wpos = {imgui.GetWindowPos()}
+		--local wpos = {imgui.GetCursorPos()}
+		self.viewer.width, self.viewer.height = imgui.GetWindowSize()
+		local umpos = {imgui.GetMousePos()}
+		--local mpos = {}
+		umpos[1] = umpos[1] - wpos[1] - 8
+		umpos[2] = umpos[2] - wpos[2] - 8 + imgui.GetScrollY()
+		local mpos = {
+			math.floor((umpos[1]-self.tilemap.camera.x)/(self.map.tilewidth*self.viewer.zoom))*self.map.tilewidth,
+			math.floor((umpos[2]-self.tilemap.camera.y)/(self.map.tileheight*self.viewer.zoom))*self.map.tileheight
+		}
 
-			if lk.isDown("lctrl") and imgui.IsMouseClicked(0) then
-				print(self.viewer.camera.x, self.viewer.camera.y)
-				camera.x = self.viewer.camera.x
-				camera.y = self.viewer.camera.y
-			end
+		umpos[1] = (umpos[1] - self.tilemap.camera.x)/self.viewer.zoom
+		umpos[2] = (umpos[2] - self.tilemap.camera.y)/self.viewer.zoom
 
-			if dpos[1] ~= 0 and dpos[1] ~= 0 then
-				if lk.isDown("lctrl") and imgui.IsMouseDragging(0) then
-					self.viewer.camera.x = camera.x + dpos[1]
-					self.viewer.camera.y = camera.y + dpos[2]
-				end
-			end
+		local tpos = {
+			mpos[1]/self.map.tilewidth,
+			mpos[2]/self.map.tileheight
+		}
 
-			--imgui.Text("mouse " .. mpos[1] .. "x" .. mpos[2])
+		local dpos = {imgui.GetMouseDragDelta(0)}
 
-			local isfocus = imgui.IsWindowHovered()
-			self.viewer.hovered = isfocus
-
-			if layer.type == "Tile" then
-				if isfocus and not anykeydown and imgui.IsMouseDown(0) then
-					self.tilemap:insertTile(mpos[1], mpos[2], self.map.currentTile, self.currentLayer, self.map.autotile, self.map.autotileType)
-				elseif isfocus and not anykeydown and imgui.IsMouseDown(1) then
-					self.tilemap:removeTile(mpos[1], mpos[2], self.currentLayer, self.map.autotile, self.map.autotileType)
-				end
-			elseif layer.type == "Entity" then
-				if self.map.currentEntity and isfocus and not anykeydown and imgui.IsMouseClicked(0) then
-					self.tilemap:addEntity(self.map.currentEntity.x, self.map.currentEntity.y, self.map.currentEntity:new(), layer.name)
-					--lume.push(layer.entities, {type=self.map.currentEntity.name, x = self.map.currentEntity.x, y = self.map.currentEntity.y})
-					--SceneManager:spawn(mpos[1], mpos[2], self.map.currentEntity:new())
-					--print(self.map.currentEntity.name)
-				elseif isfocus and not anykeydown and imgui.IsMouseClicked(0) then
-					local entities = SceneManager:getEntities()
-					--print(lume.count(entities))
-					for i,entity in ipairs(entities) do
-						if entity:isHovering(umpos[1], umpos[2]) then
-							self.map.activeEntity = entity
-							break
-						end
-					end
-				end
-				if isfocus and not anykeydown and imgui.IsMouseClicked(1) then
-					self.map.currentEntity = nil
-					local entities = SceneManager:getEntities()
-					--print(lume.count(entities))
-					for i,entity in ipairs(entities) do
-						if entity:isHovering(umpos[1], umpos[2]) then
-							--print("Opa", entity.name)
-							SceneManager:destroy(entity)
-							break
-						end
-					end
-				end
-			end
-
-			if isfocus and lk.isDown("left", "a") then
-				self.viewer.camera.x = self.viewer.camera.x - (100*0.05)
-			elseif isfocus and lk.isDown("right", "d") then
-				self.viewer.camera.x = self.viewer.camera.x + (100*0.05)
-			end
-
-			if isfocus and lk.isDown("up", "w") then
-				self.viewer.camera.y = self.viewer.camera.y - (100*0.05)
-			elseif isfocus and lk.isDown("down", "s") then
-				self.viewer.camera.y = self.viewer.camera.y + (100*0.05)
-			end
-
-			self.width, self.height = self.map.width*self.map.tilewidth, self.map.height*self.map.tileheight
-
-			lg.setCanvas(self.canvas)
-			lg.clear(0, 0, 0)
-			lg.push()
-			lg.translate(self.viewer.camera.x, self.viewer.camera.y)
-			lg.scale(self.viewer.zoom, self.viewer.zoom)
-			local quad = lg.newQuad(0, 0, self.width, self.height, self.map.tilewidth, self.map.tileheight)
-			lg.draw(self.image, quad)
-			SceneManager:draw()
-			--self.tilemap:draw()
-			if layer.type == "Tile" then
-				lg.rectangle("line", mpos[1], mpos[2], self.map.tilewidth, self.map.tileheight)
-			elseif layer.type == "Entity" then
-				if self.map.currentEntity then 
-					self.map.currentEntity.x = mpos[1]
-					self.map.currentEntity.y = mpos[2]
-					self.map.currentEntity:draw()
-				end
-			end
-			lg.pop()
-			lg.setCanvas()
-
-			imgui.Image(self.canvas, self.viewer.width, self.viewer.height)
-
-			imgui.EndChild()
-
+		--[[if lk.isDown("lctrl") and imgui.IsMouseClicked(0) then
+			--print(self.viewer.camera.x, self.viewer.camera.y)
+			camera.x = self.tilemap.camera.x
+			camera.y = self.tilemap.camera.y
+		end]]
+		local isfocus = imgui.IsWindowHovered()
+		self.viewer.hovered = isfocus
+		if Input:isKeyPressed("lalt") then
+			camera.x = self.tilemap.camera.x
+			camera.y = self.tilemap.camera.y
+			Input:fixMousePos()
 		end
 
-		imgui.NextColumn()
-		if imgui.BeginChild("Layer") then
-			local ww, wh = imgui.GetWindowSize()
-			imgui.Text("current layer: " .. layer.name)
-			self.viewer.camera.x, self.viewer.camera.y = imgui.DragFloat2("camera", self.viewer.camera.x, self.viewer.camera.y)
-			if imgui.SmallButton("reset camera") then 
-				self.viewer.camera.x = 0
-				self.viewer.camera.y = 0
+		if Input:isKeyDown("lalt") and isfocus then
+			local dpos = {Input:getMouseDelta()}
+			self.tilemap.camera.x = camera.x + dpos[1]
+			self.tilemap.camera.y = camera.y + dpos[2]
+		end
+
+		--[[if dpos[1] ~= 0 and dpos[1] ~= 0 then
+			if lk.isDown("lctrl") and imgui.IsMouseDragging(0) then
+				self.tilemap.camera.x = camera.x + dpos[1]
+				self.tilemap.camera.y = camera.y + dpos[2]
+			end
+		end]]
+
+		--imgui.Text("mouse " .. mpos[1] .. "x" .. mpos[2])
+
+		if layer.type == "Tile" then
+			if isfocus and not anykeydown and imgui.IsMouseDown(0) then
+				--print(self.map.autotileType)
+				self.tilemap:insertTile(mpos[1], mpos[2], self.map.currentTile, self.currentLayer, self.map.autotile, self.map.autotileType)
+			elseif isfocus and not anykeydown and imgui.IsMouseDown(1) then
+				self.tilemap:removeTile(mpos[1], mpos[2], self.currentLayer, self.map.autotile, self.map.autotileType)
+			end
+		elseif layer.type == "Entity" then
+			layer:setActiveEntity(self.map.activeEntity)
+			if self.map.activeEntity and lume.count(self.map.activeEntity) > 0 then
+				local dpos = {imgui.GetMouseDragDelta(0)}
+				--local enthover = self.map.activeEntity:isHovering(umpos[1], umpos[2])
+				if isfocus and not anykeydown and (dpos[1] ~= 0 or dpos[2] ~= 0) then
+					self.map.activeEntity.x = entity_pos.x + dpos[1]/self.viewer.zoom
+					self.map.activeEntity.y = entity_pos.y + dpos[2]/self.viewer.zoom
+				end
 			end
 
-			self.viewer.zoom = imgui.DragFloat("zoom", self.viewer.zoom, 0.25, 0.25, 8)
-			imgui.Separator()
+			local enthover, entselect = layer:isHoveringEntity(umpos[1], umpos[2])
+			if self.map.currentEntity and not entselect and isfocus and not anykeydown and imgui.IsMouseClicked(0) then
+				self.tilemap:addEntity(self.map.currentEntity.x, self.map.currentEntity.y, self.map.currentEntity:new(), layer.name)
+			else
+				if not entselect and isfocus and imgui.IsMouseClicked(0) then
+					self.map.activeEntity = nil
+				elseif isfocus and entselect and imgui.IsMouseClicked(0) then
+					self.map.activeEntity = enthover
+					entity_pos = {
+						x = enthover.x,
+						y = enthover.y
+					}
+					self.map.currentEntity = nil
+				elseif isfocus and entselect and imgui.IsMouseClicked(1) then
+					SceneManager:destroy(enthover)
+					self.map.currentEntity = nil
+				end
+			end
+		end
 
-			if layer.type == 'Entity' then 
+		self.width, self.height = self.tilemap.width, self.tilemap.height
+
+		lg.setCanvas(self.canvas)
+		lg.clear(0, 0, 0)
+		lg.push()
+		lg.translate(self.tilemap.camera.x, self.tilemap.camera.y)
+		lg.scale(self.viewer.zoom, self.viewer.zoom)
+		local quad = lg.newQuad(0, 0, self.width, self.height, self.map.tilewidth, self.map.tileheight)
+		lg.draw(self.image, quad)
+		SceneManager:draw()
+		--self.tilemap:draw()
+		if layer.type == "Tile" then
+			lg.rectangle("line", mpos[1], mpos[2], self.map.tilewidth, self.map.tileheight)
+		elseif layer.type == "Entity" then
+			if self.map.currentEntity then 
+				self.map.currentEntity.x = mpos[1]
+				self.map.currentEntity.y = mpos[2]
+				self.map.currentEntity:draw()
+			end
+			layer:debugEntity()
+		end
+		lg.pop()
+		lg.setCanvas()
+
+		imgui.Image(self.canvas, self.viewer.width, self.viewer.height)
+		imgui.EndDock()
+	end
+
+	imgui.SetNextDock("ImGuiDockSlot_Left")
+	imgui.SetNextDockSplitRatio(0.2, 0.2)
+	if imgui.BeginDock("Scene Info") then
+
+		imgui.Text("name: " .. self.tilemap.name)
+		self.tilemap.width, self.tilemap.height = imgui.DragInt2("size##scene_size", self.tilemap.width, self.tilemap.height)
+		--[[if layer.debug then
+			layer:debug(self)
+		end]]
+		self.viewer.zoom = imgui.DragFloat("zoom", self.viewer.zoom, 0.2, 0.2, 8)
+		self.tilemap.camera.x, self.tilemap.camera.y = imgui.DragFloat2("camera", self.tilemap.camera.x, self.tilemap.camera.y)
+		if imgui.SmallButton("reset camera") then 
+			self.tilemap.camera.x = 0
+			self.tilemap.camera.y = 0
+		end
+
+		if imgui.SmallButton("save scene") then
+			self:saveTilemap()
+		end
+		imgui.EndDock()
+	end
+
+	imgui.SetNextDock("ImGuiDockSlot_Bottom")
+	imgui.SetNextDockSplitRatio(0.2, 0.7)
+
+	if imgui.BeginDock("Layer") then
+		imgui.Text("Layers")
+		local ww, wh = imgui.GetWindowSize()
+		local keys = lume.map(self.tilemap.layers, function(x) return x.name end)
+		if imgui.BeginChildFrame(10, ww, 128) then
+			--imgui.ListBox("##layers", 1, keys, #keys)
+			for i,layer in ipairs(self.tilemap.layers) do 
+				if imgui.SmallButton("x##remove_layer_" .. layer.name) then 
+					self.tilemap:removeLayer(i)
+				end
+				imgui.SameLine()
+				local btn_char = "o"
+				if not layer.active then btn_char = "-" end
+				if imgui.SmallButton(btn_char .. "##hide_layer_" .. layer.name) then 
+					layer.active = not layer.active
+				end
+				imgui.SameLine()
+				if imgui.Selectable(layer.name .. " # " .. layer.type, i == self.currentLayer) then 
+					self.currentLayer = i
+				end
+			end
+			imgui.EndChildFrame()
+		end
+
+		--[[if imgui.SmallButton("+ tile layer") then self.tilemap:addLayer(nil, "Tile") end
+		imgui.SameLine()
+		if imgui.SmallButton("+ entity layer") then self.tilemap:addLayer(nil, "Entity") end]]
+		if imgui.SmallButton("new layer") then 
+			--imgui.OpenPopup("New Layer")
+			self.popups.layer = true
+			self.layerEdit.name = ""
+		end
+		if self.tilemap then
+			imgui.SameLine()
+			if imgui.SmallButton("up") then self.currentLayer = self.tilemap:upLayer(layer) end
+			imgui.SameLine()
+			if imgui.SmallButton("down") then self.currentLayer = self.tilemap:downLayer(layer) end
+		end
+
+
+			--[[self:newTilemap()
+			self:editTilemap()]]
+
+
+			--imgui.Text("current layer: " .. layer.name)
+
+			--[[if layer.type == 'Entity' then 
 				if imgui.Button("x##remove_filter_object") then end
 				imgui.SameLine()
 				imgui.InputText("##filter_object", "", 32)
-			end
+			elseif layer.type == 'Tile' then
+				local keys = lume.keys(Resources.tilesets)
+				local index = lume.find(keys, layer.tileset.name)
+				index = imgui.Combo("tilesets##layer_select_tileset", index, keys, #keys)
+				layer:changeTileset(keys[index])
+			end]]
 
-			if imgui.BeginChildFrame(1, ww, 196, "ImGuiWindowFlags_AlwaysAutoResize") then
+			--[[if imgui.BeginChildFrame(1, ww, 196, "ImGuiWindowFlags_AlwaysAutoResize") then
 				if layer.type == "Tile" then
+
 					self:drawTileSelector()
 				elseif layer.type == "Entity" then
-					self:drawObjectSelector()
-				end
-				imgui.EndChildFrame()
-			end
-			imgui.Separator()
-			imgui.Text("Instances")
-			if layer.type == "Entity" and imgui.BeginChildFrame(2, ww, 196, "ImGuiWindowFlags_AlwaysAutoResize") then
-				for i,entity in ipairs(layer.entities) do
-					imgui.SetNextTreeNodeOpen(false)
-					if self.map.activeEntity == entity then imgui.SetNextTreeNodeOpen(true) end
-					if imgui.TreeNode(entity.name .. "##entity_" .. i .. "_" .. layer.name .. "_" .. entity.name) then
-						imgui.Unindent()
-						entity.x, entity.y = imgui.DragInt2("position##entity_position_" .. i .. "_" .. entity.name, entity.x, entity.y)
-						entity.angle = imgui.DragInt("angle##entity_angle_" .. i .. "_" .. entity.name, entity.angle)
-						entity.scale.x, entity.scale.y = imgui.DragFloat2("scale##entity_scale_" .. i .. "_" .. entity.name, entity.scale.x, entity.scale.y)
-						if self.map.activeEntity ~= entity then
-							self.viewer.camera.x = -entity.x*self.viewer.zoom + self.viewer.width/2
-							self.viewer.camera.y = -entity.y*self.viewer.zoom + self.viewer.height/2
+					--self:drawObjectSelector()
+					imgui.Text("Instances")
+					--if layer.type == "Entity" and imgui.BeginChildFrame(2, ww, 196, "ImGuiWindowFlags_AlwaysAutoResize") then
+					for i,entity in ipairs(layer.entities) do
+						imgui.SetNextTreeNodeOpen(false)
+						if self.map.activeEntity == entity then imgui.SetNextTreeNodeOpen(true) end
+						if imgui.TreeNode(entity.__class .. "##entity_" .. i .. "_" .. layer.name .. "_" .. entity.__class) then
+							imgui.Unindent()
+							entity.x, entity.y = imgui.DragInt2("position##entity_position_" .. i .. "_" .. entity.__class, entity.x, entity.y)
+							local angle = math.deg(entity.angle)
+							angle = imgui.DragInt("angle##entity_angle_" .. i .. "_" .. entity.__class, angle)
+							entity.angle = math.rad(angle)
+							entity.scale.x, entity.scale.y = imgui.DragFloat2("scale##entity_scale_" .. i .. "_" .. entity.__class, entity.scale.x, entity.scale.y)
+							if self.map.activeEntity ~= entity then
+								self.tilemap.camera.x = -entity.x*self.viewer.zoom + self.viewer.width/2
+								self.tilemap.camera.y = -entity.y*self.viewer.zoom + self.viewer.height/2
+							end
+							self.map.activeEntity = entity
+							imgui.Indent()
+							imgui.TreePop()
 						end
-						self.map.activeEntity = entity
-						imgui.Indent()
-						imgui.TreePop()
 					end
+						--imgui.EndChildFrame()
+					--end
 				end
 				imgui.EndChildFrame()
-			end
-
-			imgui.EndChild()
+			end]]
+			--imgui.Separator()
+			imgui.EndDock()
 		end
 
-		imgui.End()
-	end
+		imgui.SetNextDock("ImGuiDockSlot_Bottom")
+		imgui.SetNextDockSplitRatio(0.2, 0.5)
+		if imgui.BeginDock("Layer Props") then
+			if layer.debug then
+				layer:debug(self)
+			end
+			imgui.EndDock()
+		end
+
+		--imgui.SetNextDock("ImGuiDockSlot_Bottom")
+
+		--imgui.PopID()
+
+
+		--[[imgui.SetNextDock("ImGuiDockSlot_Bottom")
+		if imgui.BeginDock("Debug Log") then
+			imgui.EndDock()
+		end]]
+
+		--local tst = imgui.Dock
+		--print(tst)
+
+		--imgui.DockDebugWindow()
+
+		--imgui.PushID(2121)
+
+		if self.popups.layer then
+			imgui.OpenPopup("New Layer")
+		end
+
+		self:newLayer()
+
+		--imgui.PopID()
+
+		--imgui.End()
+	--end
 end
 
 function SceneEditor:resizeCanvas()
 	self.canvas = lg.newCanvas(self.viewer.width, self.viewer.height)
 	self.canvas:setFilter("nearest", "nearest")
-end
-
-function SceneEditor:newTilemap()
-	if imgui.BeginPopupModal("New Tilemap", nil, {"ImGuiWindowFlags_NoMove", "ImGuiWindowFlags_NoResize", "ImGuiWindowFlags_AlwaysAutoResize"}) then
-		self.tilemapEdit.name = imgui.InputText("name", self.tilemapEdit.name, 32)
-		local keys = lume.keys(Resources.tilesets)
-		local index = lume.find(keys, self.tilemapEdit.tileset) or 1
-		index = imgui.Combo("tileset", index, keys, #keys)
-		self.tilemapEdit.tileset = keys[index]
-
-		self.tilemapEdit.width, self.tilemapEdit.height = imgui.InputInt2("size", self.tilemapEdit.width, self.tilemapEdit.height)
-		imgui.Separator()
-		if imgui.SmallButton("ok") or lk.isDown("return") then
-			local tilemap = Tilemap:new(self.tilemapEdit.name, self.tilemapEdit.tileset, self.tilemapEdit.width, self.tilemapEdit.height)
-			self:saveTilemap(tilemap)
-			imgui.CloseCurrentPopup()
-		end
-		imgui.SameLine()
-		if imgui.SmallButton("cancel") or lk.isDown("escape") then imgui.CloseCurrentPopup() end
-
-		imgui.EndPopup()
-	end
 end
 
 function SceneEditor:editTilemap()
@@ -426,19 +432,27 @@ end
 function SceneEditor:newLayer()
 	if imgui.BeginPopupModal("New Layer", nil, {"ImGuiWindowFlags_NoMove", "ImGuiWindowFlags_NoResize", "ImGuiWindowFlags_AlwaysAutoResize"}) then
 		self.layerEdit.name = imgui.InputText("name", self.layerEdit.name, 32)
-		local keys = {"Tile", "Entity"}
+		local keys = self.layersTypes
 		local index = lume.find(keys, self.layerEdit.type) or 1
 		index = imgui.Combo("type", index, keys, #keys)
 		self.layerEdit.type = keys[index]
+		local tileset_keys = lume.keys(Resources.tilesets)
+		index = lume.find(tileset_keys, self.layerEdit.tileset) or 1
+		if self.layerEdit.type == "Tile" then
+			index = imgui.Combo("tileset", index, tileset_keys, #tileset_keys)
+			self.layerEdit.tileset = tileset_keys[index]
+		end
 
 		imgui.Separator()
 		if imgui.SmallButton("ok") or lk.isDown("return") then 
-			self.tilemap:addLayer(self.layerEdit.name, self.layerEdit.type)
+			self.tilemap:addLayer(self.layerEdit.name, self.layerEdit.type, {tileset=self.layerEdit.tileset})
 			imgui.CloseCurrentPopup()
+			self.popups.layer = false
 		end
 		imgui.SameLine()
 		if imgui.SmallButton("cancel") or lk.isDown("escape") then 
 			imgui.CloseCurrentPopup()
+			self.popups.layer = false
 		end
 
 		imgui.EndPopup()
@@ -446,21 +460,29 @@ function SceneEditor:newLayer()
 end
 
 function SceneEditor:drawTileSelector()
-	local tileset = self.tilemap.tileset
-	local image = Resources:getImage(tileset.image)
+	--local tileset = self.tilemap.tileset
+	local layer = self.tilemap.layers[self.currentLayer]
+	if not layer then return end
+	if layer.type ~= "Tile" then return end
+	local tileset = layer.tileset
+	--local image = Resources:getImage(tileset.image)
+	local image = layer.tileset.image
 	local imagew, imageh = image:getDimensions()
 	local maxtilew = image:getWidth()/tileset.tilew
 	local maxtileh = image:getHeight()/tileset.tileh
 
 	if imgui.TreeNodeEx("Tiles") then
 		imgui.Unindent()
-		for i,quad in ipairs(tileset.quads) do
+		for i,qquad in ipairs(tileset.quads) do
+			--print(quad)
+			local quad = {qquad:getViewport()}
 			local xx = quad[1]/imagew
 			local yy = quad[2]/imageh
 			local ww = quad[3]/imagew
 			local hh = quad[4]/imageh
 
 			if imgui.ImageButton(image, 32, 32, xx, yy, xx+ww, yy+hh, 2) then
+				--print(i)
 				self.map.currentTile = i
 				self.map.autotile = false
 			end
@@ -481,8 +503,10 @@ function SceneEditor:drawTileSelector()
 				local thumb
 				thumb, index = lume.match(v, function(x) return x == 0 end)
 			end
+
+			--print(index)
 			
-			local quad = tileset.quads[index]
+			local quad = {tileset.quads[index]:getViewport()}
 			local xx = quad[1]/imagew
 			local yy = quad[2]/imageh
 			local ww = quad[3]/imagew
@@ -491,6 +515,7 @@ function SceneEditor:drawTileSelector()
 			if imgui.ImageButton(image, 32, 32, xx, yy, xx+ww, yy+hh, 2) then
 				self.map.currentTile = index
 				self.map.autotile = true
+				--print(i)
 				self.map.autotileType = i
 				--print(self.currentAutotile)
 			end
@@ -509,15 +534,15 @@ end
 function SceneEditor:drawObjectSelector()
 	-- body
 	for k,object in pairs(Resources.objects) do
-		local entity = self.map.currentEntity or {name=""}
-		if imgui.Selectable(k, k == entity.name) then
+		local entity = self.map.currentEntity or {__class=""}
+		if imgui.Selectable(k, k == entity.__class) then
 			self.map.currentEntity = object:new(0, 0)
 		end
 	end
 end
 
 function SceneEditor:saveTilemap(tilemapToSave)
-	local tilemap = {}
+	--[[local tilemap = {}
 	local ctilemap = tilemapToSave or self.tilemap
 	tilemap.name = ctilemap.name
 	tilemap.width = ctilemap.width
@@ -544,16 +569,17 @@ function SceneEditor:saveTilemap(tilemapToSave)
 		lume.push(tilemap.layers, lyr)
 	end
 	tilemap.tileset = ctilemap.tileset.name or ctilemap.tileset
-	self.debug:Log(tilemap.name, "saved")
+	self.debug:Log(tilemap.name, "saved")]]
+	local tilemap = self.tilemap:toTable()
 
 	Resources:saveTilemap(tilemap.name, tilemap)
 end
 
 function SceneEditor:wheelmoved(x, y)
 	if y > 0 and self.viewer.hovered then
-		self.viewer.zoom = self.viewer.zoom + 0.25
+		self.viewer.zoom = self.viewer.zoom + 0.2
 	elseif y < 0 and self.viewer.hovered then
-		self.viewer.zoom = self.viewer.zoom - 0.25
+		self.viewer.zoom = self.viewer.zoom - 0.2
 	end
 end
 

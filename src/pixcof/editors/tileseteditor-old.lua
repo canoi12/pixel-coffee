@@ -8,16 +8,11 @@ local autotileref = {
     1, 2, 4, 8, 0, 16, 32, 64, 128
 }
 
-function TilesetEditor:constructor(debug, name, tileset)
-    Editor.constructor(self, debug)
-    self.open = true
+function TilesetEditor:constructor()
+    Editor.constructor(self)
+    self.open = false
 
-    self.asset = {
-    	name = name,
-    	tileset = tileset
-    }
-
-    --self.tilesets = Resources.tilesets
+    self.tilesets = Resources.tilesets
     self.newTileset = {
 		name = "",
 		imgindex = 1,
@@ -82,12 +77,67 @@ function TilesetEditor:createNewSet()
 	imgui.Separator()
 end
 
+--- List all animations sets
+function TilesetEditor:listTilesets()
+	for k,tileset in pairs(self.tilesets) do
+		if imgui.SmallButton("x##remove_tileset" .. k) then
+			--self.tilesets[k] = nil
+			lume.remove(self.tilesets, tileset)
+			self.currentTileset = nil
+			Resources:removeTileset(k)
+		end
+		imgui.SameLine()
+		if imgui.SmallButton("..##edit_" .. k) then
+			self.editTileset.current = k
+			self.editTileset.new = k
+			self.editTileset.edit = true
+		end
+		imgui.SameLine()
+		if imgui.Selectable(k) then
+			self.currentTileset = k
+			self.editAutotile.edit = false
+			--self:resetCurrent()
+		end
+	end
+
+	if self.editTileset.edit then
+		imgui.OpenPopup("Edit " .. self.editTileset.current .. "##edit_anim")
+	end
+
+	if imgui.BeginPopupModal("Edit " .. self.editTileset.current .. "##edit_anim", nil, {"ImGuiWindowFlags_NoMove", "ImGuiWindowFlags_NoResize", "ImGuiWindowFlags_AlwaysAutoResize"}) then
+		--print("Testeeee")
+		local tileset = self.tilesets[self.editTileset.current]
+		self.editTileset.new = imgui.InputText("Name", self.editTileset.new, 32)
+		local keys = lume.keys(Resources.images)
+		self.editTileset.imgindex = imgui.Combo("##images", self.editTileset.imgindex, keys, lume.count(keys))
+		self.editTileset.image = keys[self.editTileset.imgindex]
+		imgui.Separator()
+		if imgui.Button("Save") then
+			--local tileset = self.tilesets[self.editTileset.current]
+			if self.editTileset.current ~= self.editTileset.new then
+				lume.remove(self.tilesets, tileset)
+
+				self.tilesets[self.editTileset.new] = tileset
+			end
+			tileset.image = self.editTileset.image
+			self.editTileset.edit = false
+			if self.currentTileset == self.editTileset.current then
+				self.currentTileset = self.editTileset.new
+			end
+			imgui.CloseCurrentPopup()
+		end
+		imgui.SameLine()
+		if imgui.Button("Cancel") then
+			self.editTileset.edit = false
+			imgui.CloseCurrentPopup()
+		end
+		imgui.EndPopup()
+	end
+end
+
 --- Open the animation set viewer
 function TilesetEditor:currentTilesetViewer()
-	if imgui.SmallButton("save tileset") then
-		self:saveTileset()
-	end
-	local tileset = self.asset.tileset
+	local tileset = self.tilesets[self.currentTileset]
 	--print(tileset.image)
 	self.tilesetViewerProps.image = Resources:getImage(tileset.image)
 	local image = self.tilesetViewerProps.image
@@ -149,7 +199,7 @@ function TilesetEditor:currentTilesetViewer()
 end
 
 function TilesetEditor:newAutoTile()
-    local tileset = self.asset.tileset
+    local tileset = self.tilesets[self.currentTileset]
     lume.push(tileset.autotiles, {})
 end
 
@@ -204,29 +254,20 @@ function TilesetEditor:autoTileEditor()
         local tileset = self.editAutotile
         local image = self.tilesetViewerProps.image
         local imgw, imgh = self.tilesetViewerProps.image_width, self.tilesetViewerProps.image_height
-        local tilew, tileh = self.asset.tileset.tilew, self.asset.tileset.tileh
+        local tilew, tileh = self.tilesets[self.currentTileset].tilew, self.tilesets[self.currentTileset].tileh
         local maxtilew, maxtileh = imgw/tilew, imgh/tileh
         local ww = imgui.GetWindowWidth()
         local mouse_x, mouse_y = imgui.GetMousePos()
         local window_x, window_y = imgui.GetWindowPos()
         local scale = 2
 
-        mouse_x, mouse_y = (mouse_x - window_x - imgui.GetScrollX())/scale, (mouse_y - window_y + imgui.GetScrollY())/scale
-
-        --[[imgui.Text("mouse: " .. mouse_x .. "x" .. mouse_y)
+        imgui.Text("mouse: " .. mouse_x .. "x" .. mouse_y)
         local local_x, local_y = mouse_x-window_x, mouse_y-window_y
         imgui.SameLine()
         local pos = math.floor(local_x/(tilew*scale)) + (maxtilew*math.floor(local_y/(tileh*scale)))
-		imgui.Text("pos: " .. math.max(pos, 0))
-        imgui.SameLine()
-        imgui.PushItemWidth(96)
-        imgui.DragInt("scale", 2)
-        imgui.PopItemWidth()
-        ]]
-        local canvas = lg.newCanvas(image:getDimensions())
-        canvas:setFilter("nearest", "nearest")
+        imgui.Text("pos: " .. math.max(pos, 0))
 
-        for imgi, quad in ipairs(self.tilesetViewerProps.quads) do
+        for imgi, teste in ipairs(self.tilesetViewerProps.quads) do
             local xxx = math.fmod(imgi-1, maxtilew)
             local yyy = math.floor((imgi-1)/maxtilew)
             local imgbtnx = xxx/maxtilew
@@ -238,67 +279,37 @@ function TilesetEditor:autoTileEditor()
 
 
             if imgi-1 > 0 and xxx == 0 then
-                --imgui.NewLine()
-                --imgui.Separator()
+                imgui.NewLine()
+                imgui.Separator()
             end
 
-            --imgui.BeginGroup()
-            --imgui.PushStyleVar("ImGuiStyleVar_ItemSpacing", 1, 2)
+            imgui.BeginGroup()
+            imgui.PushStyleVar("ImGuiStyleVar_ItemSpacing", 1, 2)
             
             local mask = self:calcMask(tileset.tiles[imgi])
-		    lg.setCanvas(canvas)
-		    local view = {quad:getViewport()}
-            lg.draw(image, quad, view[1], view[2])
-            love.graphics.setBlendMode('alpha', 'alphamultiply') 
             for i=0,8 do
             	local mask_index = i + 1
 
-            	local tx = math.fmod(i, 3)*(tilew/3)
-            	local ty = math.floor(i/3)*(tileh/3)
-            	local tw = tilew/3
-            	local th = tileh/3
-
-                --[[local ii = math.fmod(i, 3)
+                local ii = math.fmod(i, 3)
                 local ji = math.floor(i/3)
                 local tx = imgbtnx + (ii/maxtilew)/3
                 local tw = tx + imgbtnw
                 local ty = imgbtny + (ji/maxtileh)/3
-                local th = ty + imgbtnh]]
+                local th = ty + imgbtnh
 
-                --[[if i > 0 and ii == 0 then
+                if i > 0 and ii == 0 then
                     imgui.NewLine()
-                end]]
-
-                if imgui.IsMouseDown(0) then
-                	--print(mouse_x, mouse_y, view[1] + tx, view[2] + ty, view[1] + (tx + tw), view[2] + ty + th)
-                	if mouse_x >= view[1] + tx and mouse_x < view[1] + tx + tw and mouse_y >= view[2] + ty and mouse_y < view[2] + ty + th then 
-                		print("teste", i)
-                		mask[mask_index] = 1
-                	end
-                elseif imgui.IsMouseDown(1) then
-                	--print(mouse_x, mouse_y, view[1] + tx, view[2] + ty, view[1] + (tx + tw), view[2] + ty + th)
-                	if mouse_x >= view[1] + tx and mouse_x < view[1] + tx + tw and mouse_y >= view[2] + ty and mouse_y < view[2] + ty + th then 
-                		--print("teste", i)
-                		mask[mask_index] = 0
-                	end
                 end
-
-                local color = {1, 0, 0, 0}
+                local color = {1, 1, 1, 1}
 
                 if mask[mask_index] == 1 then
-                    color[4] = 0.5
+                    color[2] = 0
+                    color[3] = 0
                 end
 
-                lg.setColor(color)
-                lg.rectangle("fill", view[1] + tx, view[2] + ty, tilew/3, tileh/3)
-                lg.setColor(1, 1, 1, 1)
+                imgui.ImageButton(image, tilew/3 * scale, tileh/3 * scale, tx, ty, tw, th, 1, 0.46*color[1], 0.23*color[2], 0.54*color[3], 1, color[1], color[2], color[3], color[4])
 
-
-		       	--imgui.Image(canvas, image:getDimensions())
-
-                --imgui.ImageButton(image, tilew/3 * scale, tileh/3 * scale, tx, ty, tw, th, 1, 0.46*color[1], 0.23*color[2], 0.54*color[3], 1, color[1], color[2], color[3], color[4])
-
-                --[[if imgui.IsMouseDown(0) then
+                if imgui.IsMouseDown(0) then
                     if (imgui.IsItemHovered("ImGuiHoveredFlags_AllowWhenBlockedByActiveItem")  ) then
                         mask[mask_index] = 1
                     end
@@ -306,35 +317,66 @@ function TilesetEditor:autoTileEditor()
                     if (imgui.IsItemHovered("ImGuiHoveredFlags_AllowWhenBlockedByActiveItem")  ) then
                         mask[mask_index] = 0
                     end
-                end]]
+                end
                 
-                --imgui.SameLine()
-
+                imgui.SameLine()
             end
+            imgui.PopStyleVar()
+            imgui.EndGroup()
             
-            lg.rectangle("line", view[1], view[2], tilew, tileh)
-	       	lg.setCanvas()
-            --imgui.PopStyleVar()
-            --imgui.EndGroup()
-            
-            --imgui.SameLine()
+            imgui.SameLine()
             tileset.tiles[imgi] = self:calcValueFromMask(mask)
         end
-        local imgw, imgh = image:getDimensions()
-        imgui.Image(canvas, imgw*scale, imgh*scale)
         imgui.EndChild()
     end
 end
 
+--- Open the current animation viewer
+function Animation:currentAnimationViewer()
+	local animation = self.currentAnimation
+	local image = self.animationSetViewerProps.image
+	local w,h = image:getDimensions()
+	local quads = self.animationSetViewerProps.quads
+	local ww = imgui.GetColumnWidth()
+	if animation.playing then
+		animation.cspeed = animation.cspeed - (animation.speed * 0.05)
+
+		if animation.cspeed <= 0 then
+
+			animation.frame = animation.frame + 1
+			if animation.frame > animation.enframe then
+				animation.frame = animation.stframe
+			end
+			animation.cspeed = 1
+		end
+		
+		animation.frame = lume.clamp(animation.frame, animation.stframe, animation.enframe)
+
+		local qx,qy,qw,qh = quads[animation.frame+1]:getViewport()
+		qx = qx/w
+		qy = qy/h
+		qw = qx + qw/w
+		qh = qy + qh/h
+		imgui.Image(image, ww, ww, qx, qy, qw, qh)
+	else
+		local qx,qy,qw,qh = quads[1]:getViewport()
+		qx = qx/w
+		qy = qy/h
+		qw = qx + qw/w
+		qh = qy + qh/h
+		imgui.Image(image, ww, ww, qx, qy, qw, qh)
+	end
+	animation.speed = imgui.DragInt("Speed##anim_spd", animation.speed)
+end
+
 function TilesetEditor:draw()
-	self.open = imgui.Begin(self.asset.name, true)
-	if self.open then
+	if imgui.Begin("Tileset Editor") then
 		
 
-		--self:createNewSet()
+		self:createNewSet()
 
-		imgui.Columns(2)
-		--[[if self.firstOpen then
+		imgui.Columns(3)
+		if self.firstOpen then
 			local w = imgui.GetWindowSize()
 			imgui.SetColumnWidth(0, w/6)
 			imgui.SetColumnWidth(1, w/4)
@@ -343,34 +385,31 @@ function TilesetEditor:draw()
 
 	    self:listTilesets()
 
-		imgui.NextColumn()]]
+		imgui.NextColumn()
 
-		--if self.currentTileset then
-		imgui.BeginChild("Tileset Editor##tile_editor")
+		if self.currentTileset then
+			imgui.BeginChild("Tileset Editor##tile_editor")
 			self:currentTilesetViewer()
-		imgui.EndChild()
 
-        imgui.NextColumn()
-        
-        if self.editAutotile.edit then
-            self:autoTileEditor()
-        end
-		--end
+			imgui.EndChild()
 
+            imgui.NextColumn()
+            
+            if self.editAutotile.edit then
+                self:autoTileEditor()
+            end
+		end
+
+		imgui.End()
 	end
-	imgui.End()
 end
 
-function TilesetEditor:saveTileset()
-	--[[for k,tileset in pairs(self.tilesets) do
+function TilesetEditor:save()
+	for k,tileset in pairs(self.tilesets) do
 		tileset.name = k
 		Resources:saveTileset(k, tileset)
 	end
-	Resources:loadTilesets()]]
-	if self.asset.name ~= self.asset.tileset.name then
-		Resources:removeTileset(self.asset.name)
-	end
-	Resources:saveTileset(self.asset.tileset.name, self.asset.tileset)
+	Resources:loadTilesets()
 end
 
 return TilesetEditor
