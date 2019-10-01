@@ -1,19 +1,17 @@
 local Component = require("pixcof.components.component")
-local Animation = require("pixcof.animation")
+local Sprite = require("pixcof.types.sprite")
+local Vector2 = require("pixcof.types.vector2")
 local SpriteComponent = Component:extend("SpriteComponent")
 
 local animation = ""
 
-function SpriteComponent:constructor(entity, animation, speed)
+function SpriteComponent:constructor(entity, sprite, speed)
 	Component.constructor(self, entity)
-	self.animation = Animation(animation, speed or 8)
-	self.origin = {
-		x = 0,
-		y = 0
-	}
-	self.width = self.animation.width
-	self.height = self.animation.height
-	animation = self.animation.currentAnimation
+	self.sprite = Sprite(sprite, speed)
+	self.origin = Vector2()
+	self.width = self.sprite.width or 16
+	self.height = self.sprite.height or 16
+	animation = self.sprite.currentAnimation
 end
 
 function SpriteComponent:setOrigin(vertical, horizontal)
@@ -43,23 +41,32 @@ function SpriteComponent:setOrigin(vertical, horizontal)
 end
 
 function SpriteComponent:play(animation)
-	self.animation:setAnimation(animation)
+	self.sprite:setAnimation(animation)
 end
 
 function SpriteComponent:update(dt)
-	self.animation:update(dt)
+	self.sprite:update(dt)
 end
 
 function SpriteComponent:draw()
-	self.animation:draw(self.entity.x + self.origin.x, self.entity.y + self.origin.y, self.entity.angle, self.entity.scale.x, self.entity.scale.y, self.origin.x, self.origin.y)
+	--print(self.entity.__class)
+	self.sprite:draw(self.entity.position.x + self.origin.x, self.entity.position.y + self.origin.y, self.entity.angle, self.entity.scale.x, self.entity.scale.y, self.origin.x, self.origin.y)
 end
 
 function SpriteComponent:debug()
 	self.origin.x, self.origin.y = imgui.DragInt2("origin", self.origin.x, self.origin.y)
 	local change = false
 	animation = imgui.InputText("animation", animation, 32)
-	animation = self.animation:setAnimation(animation) or animation
-	self.animation.initial_speed = imgui.DragInt("speed", self.animation.initial_speed)
+	animation = self.sprite:setAnimation(animation) or animation
+	self.sprite.initial_speed = imgui.DragInt("speed", self.sprite.initial_speed)
+end
+
+function SpriteComponent:debugDraw(active)
+	love.graphics.setColor(1, 1, 1, 1)
+	if active then love.graphics.setColor(lume.color("#9a4f50")) end
+	lg.rectangle("line", self.entity.position.x, self.entity.position.y, self.width, self.height)
+	lg.circle("fill", self.entity.position.x + self.origin.x, self.entity.position.y + self.origin.y, 2)
+	lg.setColor(1, 1, 1, 1)
 end
 
 return SpriteComponent

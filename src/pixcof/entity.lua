@@ -1,18 +1,12 @@
 local Class = require("pixcof.class")
+local Resources = require("pixcof.resources")
+local Vector2 = require("pixcof.types.vector2")
 local Entity = Class:extend("Entity")
 
 function Entity:constructor(x, y)
-	self.x = x or 0
-	self.y = y or 0
+	self.position = Vector2(x, y)
 	self.angle = 0
-	self.scale = {
-		x = 1,
-		y = 1
-	}
-	self.origin = {
-		x = 0,
-		y = 0
-	}
+	self.scale = Vector2(1, 1)
 	self.components = {}
 	self.width = 16
 	self.height = 16
@@ -72,16 +66,22 @@ function Entity:debugDraw(active)
 	if comp then
 		origin = comp.origin
 		width, height = comp.width, comp.height
+	else
+		love.graphics.setColor(1, 1, 1, 1)
+		if active then love.graphics.setColor(lume.color("#9a4f50")) end
+		love.graphics.rectangle("line", self.position.x, self.position.y, width*self.scale.x, height*self.scale.y)
+		--love.graphics.circle("fill", self.x + origin.x, self.y + origin.y, 2)
+		lg.draw(Resources:getImage("pixcof-2"), self.position.x, self.position.y, self.angle, self.scale.x, self.scale.y)
+		love.graphics.setColor(1, 1, 1, 1)
 	end
-	love.graphics.setColor(1, 1, 1, 1)
-	if active then love.graphics.setColor(lume.color("rgb(172, 50, 50)")) end
-	love.graphics.rectangle("line", self.x, self.y, width*self.scale.x, height*self.scale.y)
-	love.graphics.circle("fill", self.x + origin.x, self.y + origin.y, 2)
-	love.graphics.setColor(1, 1, 1, 1)
+
+	for i,component in ipairs(self.components) do
+		component:debugDraw(active)
+	end
 end
 
 function Entity:debug(editor)
-	self.x, self.y = imgui.DragInt2("position##entity_position_" .. self.__class, self.x, self.y)
+	self.position.x, self.position.y = imgui.DragInt2("position##entity_position_" .. self.__class, self.position.x, self.position.y)
 	local angle = math.deg(self.angle)
 	angle = imgui.DragInt("angle##entity_angle_" .. self.__class, angle)
 	self.angle = math.rad(angle)
@@ -97,8 +97,8 @@ function Entity:debug(editor)
 		imgui.TreePop()
 	end
 	if editor.map.activeEntity ~= self then
-		editor.tilemap.camera.x = -self.x*editor.viewer.zoom + editor.viewer.width/2
-		editor.tilemap.camera.y = -self.y*editor.viewer.zoom + editor.viewer.height/2
+		editor.tilemap.camera.x = -self.position.x*editor.viewer.zoom + editor.viewer.width/2
+		editor.tilemap.camera.y = -self.position.y*editor.viewer.zoom + editor.viewer.height/2
 	end
 				editor.map.activeEntity = self
 end
@@ -109,10 +109,10 @@ function Entity:isHovering(x, y)
 		self.width = comp.width
 		self.height = comp.height
 	end
-	local xx = self.x - self.origin.x
-	local yy = self.y - self.origin.y
-	local ww = xx + self.width * self.scale.x
-	local hh = yy + self.height * self.scale.y
+	local xx = self.position.x
+	local yy = self.position.y
+	local ww = xx + self.width
+	local hh = yy + self.height
 	if x >= xx and x <= ww and y >= yy and y <= hh then
 		return true
 	end

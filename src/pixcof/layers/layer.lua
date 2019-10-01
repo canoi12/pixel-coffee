@@ -22,7 +22,7 @@ function Layer:toTable()
 end
 
 function Layer:debug(editor)
-	imgui.Text("Layer Props")
+	--imgui.Text("Layer Props")
 end
 
 function Layer:resize(width, height)

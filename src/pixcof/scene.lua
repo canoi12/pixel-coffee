@@ -35,6 +35,8 @@ function Scene:constructor(ctilemap)
 			lume.push(self.layers, Layers.TilemapLayer:load(self, layer))
 		elseif layer.type == "Background" then
 			lume.push(self.layers, Layers.BackgroundLayer:load(self, layer))
+		elseif layer.type == "Sprite" then
+			lume.push(self.layers, Layers.SpriteLayer(self, layer))
 		end
 	end
 	--self:load_objects_from_map()
@@ -65,7 +67,7 @@ function Scene:removeTile(x, y, layer, autotile, autotile_type)
 end
 
 function Scene:upLayer(layer)
-	print(layer)
+	--print(layer)
 	if not layer then return end
 	local index = self:getLayerIndex(layer)
 	if index <= 1 then
@@ -79,7 +81,7 @@ function Scene:upLayer(layer)
 end
 
 function Scene:downLayer(layer)
-	print(layer)
+	--print(layer)
 	if not layer then return end
 	local index = self:getLayerIndex(layer)
 	if index >= #self.layers then
@@ -141,6 +143,8 @@ function Scene:addLayer(name, type, opt)
 		layer_obj = self:newEntityLayer(layer.name)
 	elseif layer.type == "Background" then
 		layer_obj = self:newBackgroundLayer(layer.name, opt.color, opt.image)
+	elseif layer.type == "Sprite" then
+		layer_obj = self:newSpriteLayer(layer.name)
 	end
 
 	--lume.push(self.layers, layer)
@@ -197,6 +201,24 @@ function Scene:newBackgroundLayer(name, color, image)
 
 	local layer_obj = Layers.BackgroundLayer(self, layer.name, color, image)
 	lume.push(self.layers, layer_obj)
+
+	return layer_obj
+end
+
+function Scene:newSpriteLayer(name)
+	local layer = {}
+	layer.name = name or "Layer"
+	local cname = layer.name
+	local index = 1
+	while lume.any(self.layers, function(x) return x.name == cname end) do
+		cname = layer.name .. " (" .. index .. ")"
+		index = index + 1
+	end
+	layer.name = cname
+
+	local layer_obj = Layers.SpriteLayer(self, layer.name)
+	lume.push(self.layers, layer_obj)
+
 
 	return layer_obj
 end

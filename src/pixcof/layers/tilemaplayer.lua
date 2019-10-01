@@ -18,6 +18,10 @@ function TilemapLayer:constructor(scene, layer, tileset)
 	self.image = self.tileset.image
 	self.width = self.scene.width
 	self.height = self.scene.height
+	self.mapsize = {
+		x = self.width,
+		y = self.height
+	}
 	self.tiles = layer.tiles or {}
 	self.quads = {}
 	--print(self.tiles)
@@ -171,25 +175,34 @@ function TilemapLayer:autoTile(x, y, autotile_type)
 	end
 end
 
-function TilemapLayer:resize(width, height)
-	local width = width or self.width
-	local height = height or self.height
+function TilemapLayer:resize()
+
+	local aux = {
+		math.floor(self.scene.width/self.tileset.tilew),
+		math.floor(self.scene.height/self.tileset.tileh)
+	}
+
+
+	--print("opora")
+
+	--print(self.width, self.height, width, height)
 
 	for yy=1,self.height do
 		for xx=1,self.width do
-			if yy > height then
+			if yy > aux[2] then
 				self.tiles[yy] = nil
 			end
-			if xx > width then
-				self.tiles[yy][xx] = nil
+			if xx > aux[1] then
+				if self.tiles[yy] then
+					self.tiles[yy][xx] = nil
+				end
 			end
 		end
 	end
 
-	self.width = width or 0
-	self.height = height or 0
-	self.width = math.max(self.width, 0)
-	self.height = math.max(self.height, 0)
+	self.width = math.floor(self.scene.width/self.tileset.tilew)
+	self.height = math.floor(self.scene.height/self.tileset.tileh)
+
 	for yy=1,self.height do
 		for xx=1,self.width do
 			if not self.tiles[yy] then
@@ -272,8 +285,9 @@ function TilemapLayer:changeTileset(tileset)
 end
 
 function TilemapLayer:update(dt)
-	self.width = self.scene.width/(self.tileset.tilew or 16)
-	self.height = self.scene.height/(self.tileset.tileh or 16)
+	--[[self.width = self.scene.width/(self.tileset.tilew or 16)
+	self.height = self.scene.height/(self.tileset.tileh or 16)]]
+	self:resize()
 end
 
 function TilemapLayer:draw()

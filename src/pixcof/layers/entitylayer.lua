@@ -14,14 +14,14 @@ function EntityLayer:constructor(layer)
 		self.name = layer.name
 		for i,entity in ipairs(layer.entities) do
 			--print(entity.type)
-			self:addEntity(entity.x, entity.y, Resources.objects[entity.type]:new())
+			self:addEntity(entity.position.x, entity.position.y, Resources.objects[entity.type]:new())
 		end
 	end
 end
 
 function EntityLayer:addEntity(x, y, entity)
-	entity.x = x or 0
-	entity.y = y or 0
+	entity.position.x = x or 0
+	entity.position.y = y or 0
 	lume.push(self.entities_to_add, entity)
 end
 
@@ -76,8 +76,7 @@ function EntityLayer:toTable()
 	layer.entities = {}
 	for i,entity in ipairs(self.entities) do
 		local ent = {}
-		ent.x = entity.x
-		ent.y = entity.y
+		ent.position = entity.position
 		ent.scale = entity.scale
 		ent.angle = entity.angle
 		ent.type = entity.__class

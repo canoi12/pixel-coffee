@@ -15,4 +15,7 @@ end
 function Component:debug()
 end
 
+function Component:debugDraw(active)
+end
+
 return Component

@@ -1,13 +1,14 @@
 local Editor = require("pixcof.editors.editor")
 local Input = require("pixcof.input")
 local Tilemap = require("pixcof.tilemap")
+local Vector2 = require("pixcof.types.vector2")
 local Resources = require("pixcof.resources")
 local SceneEditor = Editor:extend("SceneEditor")
 local SceneManager = require("pixcof.scenemanager")
 local Scene = require("pixcof.scene")
 
-local camera = {x = 0, y = 0}
-local entity_pos = {x = 0, y = 0}
+local camera = Vector2()
+local entity_pos = Vector2()
 local moveCamera = false
 
 function SceneEditor:constructor(debug)
@@ -18,7 +19,7 @@ function SceneEditor:constructor(debug)
 	self.image:setFilter("nearest", "nearest")
 	self.image:setWrap("repeat", "repeat")
 
-	self.layersTypes = {"Tile", "Entity", "Background"}
+	self.layersTypes = {"Tile", "Entity", "Background", "Sprite"}
 
 	self.popups = {
 		layer = false
@@ -99,12 +100,12 @@ function SceneEditor:draw()
 		
 	self:resizeCanvas()
 
-	imgui.SetNextDock("ImGuiDockSlot_Left")
-	imgui.SetNextDockSplitRatio(0.8, 0.2)
+	--[[imgui.SetNextDock("ImGuiDockSlot_Left")
+	imgui.SetNextDockSplitRatio(0.85, 0.2)]]
 
 	--imgui.PushID(2121)
 
-	if imgui.BeginDock("Scene Viewer##scene_viewer") then
+	if imgui.Begin("Scene Viewer##scene_viewer") then
 		local wpos = {imgui.GetWindowPos()}
 		--local wpos = {imgui.GetCursorPos()}
 		self.viewer.width, self.viewer.height = imgui.GetWindowSize()
@@ -166,25 +167,25 @@ function SceneEditor:draw()
 			layer:setActiveEntity(self.map.activeEntity)
 			if self.map.activeEntity and lume.count(self.map.activeEntity) > 0 then
 				local dpos = {imgui.GetMouseDragDelta(0)}
+				local delpos = Vector2(dpos[1], dpos[2])
 				--local enthover = self.map.activeEntity:isHovering(umpos[1], umpos[2])
 				if isfocus and not anykeydown and (dpos[1] ~= 0 or dpos[2] ~= 0) then
-					self.map.activeEntity.x = entity_pos.x + dpos[1]/self.viewer.zoom
-					self.map.activeEntity.y = entity_pos.y + dpos[2]/self.viewer.zoom
+					local pos = entity_pos + (delpos / self.viewer.zoom)
+					self.map.activeEntity.position = pos
 				end
 			end
 
 			local enthover, entselect = layer:isHoveringEntity(umpos[1], umpos[2])
 			if self.map.currentEntity and not entselect and isfocus and not anykeydown and imgui.IsMouseClicked(0) then
-				self.tilemap:addEntity(self.map.currentEntity.x, self.map.currentEntity.y, self.map.currentEntity:new(), layer.name)
+				self.tilemap:addEntity(self.map.currentEntity.position.x, self.map.currentEntity.position.y, self.map.currentEntity:new(), layer.name)
+			elseif self.map.currentEntity and not entselect and isfocus and not anykeysdown and imgui.IsMouseClicked(1) then
+				self.map.currentEntity = nil
 			else
 				if not entselect and isfocus and imgui.IsMouseClicked(0) then
 					self.map.activeEntity = nil
 				elseif isfocus and entselect and imgui.IsMouseClicked(0) then
 					self.map.activeEntity = enthover
-					entity_pos = {
-						x = enthover.x,
-						y = enthover.y
-					}
+					entity_pos = enthover.position
 					self.map.currentEntity = nil
 				elseif isfocus and entselect and imgui.IsMouseClicked(1) then
 					SceneManager:destroy(enthover)
@@ -208,9 +209,10 @@ function SceneEditor:draw()
 			lg.rectangle("line", mpos[1], mpos[2], self.map.tilewidth, self.map.tileheight)
 		elseif layer.type == "Entity" then
 			if self.map.currentEntity then 
-				self.map.currentEntity.x = mpos[1]
-				self.map.currentEntity.y = mpos[2]
+				self.map.currentEntity.position = Vector2(mpos[1], mpos[2])
+				--self.map.currentEntity.position.y = mpos[2]
 				self.map.currentEntity:draw()
+				self.map.currentEntity:debugDraw()
 			end
 			layer:debugEntity()
 		end
@@ -218,12 +220,12 @@ function SceneEditor:draw()
 		lg.setCanvas()
 
 		imgui.Image(self.canvas, self.viewer.width, self.viewer.height)
-		imgui.EndDock()
+		imgui.End()
 	end
 
-	imgui.SetNextDock("ImGuiDockSlot_Left")
-	imgui.SetNextDockSplitRatio(0.2, 0.2)
-	if imgui.BeginDock("Scene Info") then
+	--[[imgui.SetNextDock("ImGuiDockSlot_Left")
+	imgui.SetNextDockSplitRatio(0.2, 0.2)]]
+	if imgui.Begin("Scene Info") then
 
 		imgui.Text("name: " .. self.tilemap.name)
 		self.tilemap.width, self.tilemap.height = imgui.DragInt2("size##scene_size", self.tilemap.width, self.tilemap.height)
@@ -240,14 +242,13 @@ function SceneEditor:draw()
 		if imgui.SmallButton("save scene") then
 			self:saveTilemap()
 		end
-		imgui.EndDock()
+		imgui.End()
 	end
 
-	imgui.SetNextDock("ImGuiDockSlot_Bottom")
-	imgui.SetNextDockSplitRatio(0.2, 0.7)
+	--[[imgui.SetNextDock("ImGuiDockSlot_Bottom")
+	imgui.SetNextDockSplitRatio(0.2, 0.7)]]
 
-	if imgui.BeginDock("Layer") then
-		imgui.Text("Layers")
+	if imgui.Begin("Layers") then
 		local ww, wh = imgui.GetWindowSize()
 		local keys = lume.map(self.tilemap.layers, function(x) return x.name end)
 		if imgui.BeginChildFrame(10, ww, 128) then
@@ -267,8 +268,8 @@ function SceneEditor:draw()
 					self.currentLayer = i
 				end
 			end
-			imgui.EndChildFrame()
 		end
+		imgui.EndChildFrame()
 
 		--[[if imgui.SmallButton("+ tile layer") then self.tilemap:addLayer(nil, "Tile") end
 		imgui.SameLine()
@@ -336,16 +337,16 @@ function SceneEditor:draw()
 				imgui.EndChildFrame()
 			end]]
 			--imgui.Separator()
-			imgui.EndDock()
+			imgui.End()
 		end
 
-		imgui.SetNextDock("ImGuiDockSlot_Bottom")
-		imgui.SetNextDockSplitRatio(0.2, 0.5)
-		if imgui.BeginDock("Layer Props") then
+		--[[imgui.SetNextDock("ImGuiDockSlot_Bottom")
+		imgui.SetNextDockSplitRatio(0.2, 0.5)]]
+		if imgui.Begin("Layer Props") then
 			if layer.debug then
 				layer:debug(self)
 			end
-			imgui.EndDock()
+			imgui.End()
 		end
 
 		--imgui.SetNextDock("ImGuiDockSlot_Bottom")

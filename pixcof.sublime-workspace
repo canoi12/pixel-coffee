@@ -186,13 +186,10 @@
 			}
 		},
 		{
-			"contents": "local Class = require(\"pixcof.class\")\nlocal Entity = Class:extend(\"Entity\")\n\nfunction Entity:constructor(x, y)\n\tself.x = x or 0\n\tself.y = y or 0\n\tself.angle = 0\n\tself.scale = {\n\t\tx = 1,\n\t\ty = 1\n\t}\n\tself.origin = {\n\t\tx = 0,\n\t\ty = 0\n\t}\n\tself.components = {}\n\tself.width = 16\n\tself.height = 16\n\tself.animation = nil\n\tself.image = nil\n\t--[[self.centerx = 0\n\tself.centery = 0]]\nend\n\nfunction Entity:addComponent(component)\n\tlume.push(self.components, component)\nend\n\nfunction Entity:getComponent(componentType)\n\tfor i,component in ipairs(self.components) do\n\t\tif component:is(componentType) then return component end\n\tend\n\treturn nil\nend\n\nfunction Entity:removeComponent(component)\n\tif type(component) == \"string\" then\n\t\tlocal comp = self:getComponent(component)\n\t\tlume.remove(self.components, comp)\n\t\treturn\n\tend\n\tlume.remove(self.components, component)\nend\n\nfunction Entity:update(dt)\n\t--if self.animation and self.animation:is(\"Animation\") then self.animation:update(dt) end\n\tlume.each(self.components, \"update\", dt)\nend\n\nfunction Entity:draw()\n\t--[[if self.animation and self.animation:is(\"Animation\") then self.animation:drawEntity(self) \n\telseif self.image then lg.draw(self.image, self.x, self.y, self.angle, self.scale.x, self.scale.y, self.origin.x, self.origin.y) end]]\n\tlume.each(self.components, \"draw\")\nend\n\nfunction Entity:debugDraw(active)\n\t--[[local image = {32, 32}\n\tif not self.width or not self.height then\n\t\tif self.animation then image = {self.animation.width, self.animation.height}\n\t\telseif self.image then image = {self.image:getDimensions()} end\n\t\tprint(image[1], image[2])\n\t\tself.width = image[1]\n\t\tself.height = image[2]\n\tend]]\n\tlocal origin = {\n\t\tx = 0,\n\t\ty = 0\n\t}\n\tlocal width = self.width or 32\n\tlocal height = self.height or 32\n\tlocal comp = self:getComponent(\"SpriteComponent\")\n\tif comp then\n\t\torigin = comp.origin\n\t\twidth, height = comp.width, comp.height\n\tend\n\tlove.graphics.setColor(1, 1, 1, 1)\n\tif active then love.graphics.setColor(1, 0, 0, 1) end\n\tlove.graphics.rectangle(\"line\", self.x, self.y, width*self.scale.x, height*self.scale.y)\n\tlove.graphics.circle(\"fill\", self.x + origin.x, self.y + origin.y, 2)\n\tlove.graphics.setColor(1, 1, 1, 1)\nend\n\nfunction Entity:isHovering(x, y)\n\tlocal comp = self:getComponent(\"SpriteComponent\")\n\tif comp then \n\t\tself.width = comp.width\n\t\tself.height = comp.height\n\tend\n\tlocal xx = self.x - self.origin.x\n\tlocal yy = self.y - self.origin.y\n\tlocal ww = xx + self.width * self.scale.x\n\tlocal hh = yy + self.height * self.scale.y\n\tif x >= xx and x <= ww and y >= yy and y <= hh then\n\t\treturn true\n\tend\n\treturn false\nend\n\nreturn Entity",
 			"file": "src/pixcof/entity.lua",
-			"file_size": 2597,
-			"file_write_time": 132142614865085253,
 			"settings":
 			{
-				"buffer_size": 2601,
+				"buffer_size": 3722,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -201,8 +198,16 @@
 			"file": "src/pixcof/components/spritecomponent.lua",
 			"settings":
 			{
-				"buffer_size": 1818,
+				"buffer_size": 2328,
 				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/assets/sprites/boto.lua",
+			"settings":
+			{
+				"buffer_size": 130,
 				"line_ending": "Unix"
 			}
 		},
@@ -210,7 +215,7 @@
 			"file": "src/pixcof/components/component.lua",
 			"settings":
 			{
-				"buffer_size": 283,
+				"buffer_size": 325,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -219,7 +224,7 @@
 			"file": "src/objects/player.lua",
 			"settings":
 			{
-				"buffer_size": 349,
+				"buffer_size": 412,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -237,7 +242,16 @@
 			"file": "src/pixcof/debug.lua",
 			"settings":
 			{
-				"buffer_size": 3165,
+				"buffer_size": 3218,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/components/boxcomponent.lua",
+			"settings":
+			{
+				"buffer_size": 2002,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -272,8 +286,25 @@
 			"file": "src/pixcof/editors/sceneeditor.lua",
 			"settings":
 			{
-				"buffer_size": 17555,
+				"buffer_size": 18168,
 				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/editors/spriteeditor.lua",
+			"settings":
+			{
+				"buffer_size": 6742,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/assets/sprites/dolphin.lua",
+			"settings":
+			{
+				"buffer_size": 496,
 				"line_ending": "Unix"
 			}
 		},
@@ -298,7 +329,7 @@
 			"file": "src/pixcof/viewers/resourcesviewer.lua",
 			"settings":
 			{
-				"buffer_size": 11128,
+				"buffer_size": 10832,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -335,7 +366,16 @@
 			"file": "src/objects/camaleao.lua",
 			"settings":
 			{
-				"buffer_size": 616,
+				"buffer_size": 1158,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/components/init.lua",
+			"settings":
+			{
+				"buffer_size": 319,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -344,16 +384,17 @@
 			"file": "src/pixcof/animation.lua",
 			"settings":
 			{
-				"buffer_size": 2750,
+				"buffer_size": 2955,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/assets/animations/boto.lua",
+			"file": "src/pixcof/components/kinematiccomponent.lua",
 			"settings":
 			{
-				"buffer_size": 173,
+				"buffer_size": 661,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
@@ -379,7 +420,43 @@
 			"file": "src/pixcof/resources.lua",
 			"settings":
 			{
-				"buffer_size": 5304,
+				"buffer_size": 6585,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/types/vector2.lua",
+			"settings":
+			{
+				"buffer_size": 1514,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/types/sprite.lua",
+			"settings":
+			{
+				"buffer_size": 3095,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/types/vector3.lua",
+			"settings":
+			{
+				"buffer_size": 1821,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/types/vector4.lua",
+			"settings":
+			{
+				"buffer_size": 2072,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -404,8 +481,43 @@
 			"file": "src/pixcof/layers/entitylayer.lua",
 			"settings":
 			{
-				"buffer_size": 3717,
+				"buffer_size": 3779,
 				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/layers/spritelayer.lua",
+			"settings":
+			{
+				"buffer_size": 1074,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pixcof/types/spriteobject.lua",
+			"settings":
+			{
+				"buffer_size": 336,
+				"encoding": "UTF-8",
+				"line_ending": "Unix",
+				"name": "local Entity ="
+			}
+		},
+		{
+			"file": "src/assets/tilemaps/menu.lua",
+			"settings":
+			{
+				"buffer_size": 7749,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/assets/animations/camaleao.lua",
+			"settings":
+			{
+				"buffer_size": 506,
 				"line_ending": "Unix"
 			}
 		},
@@ -413,7 +525,7 @@
 			"file": "src/pixcof/layers/tilemaplayer.lua",
 			"settings":
 			{
-				"buffer_size": 9548,
+				"buffer_size": 9765,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -448,7 +560,7 @@
 			"file": "src/pixcof/scene.lua",
 			"settings":
 			{
-				"buffer_size": 8719,
+				"buffer_size": 9307,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -457,7 +569,7 @@
 			"file": "src/pixcof/layers/layer.lua",
 			"settings":
 			{
-				"buffer_size": 465,
+				"buffer_size": 467,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -466,7 +578,7 @@
 			"file": "src/pixcof/layers/init.lua",
 			"settings":
 			{
-				"buffer_size": 232,
+				"buffer_size": 293,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -514,7 +626,6 @@
 			"settings":
 			{
 				"buffer_size": 3587,
-				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
@@ -526,7 +637,6 @@
 			"settings":
 			{
 				"buffer_size": 33973,
-				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
@@ -538,7 +648,6 @@
 			"settings":
 			{
 				"buffer_size": 5157,
-				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
@@ -564,7 +673,7 @@
 			"file": "src/objects/dolphin.lua",
 			"settings":
 			{
-				"buffer_size": 402,
+				"buffer_size": 562,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -573,7 +682,7 @@
 			"file": "src/objects/boto.lua",
 			"settings":
 			{
-				"buffer_size": 487,
+				"buffer_size": 484,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -589,7 +698,7 @@
 			"file": "src/pixcof/editors/init.lua",
 			"settings":
 			{
-				"buffer_size": 361,
+				"buffer_size": 425,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -616,7 +725,7 @@
 			"file": "src/pixcof/game.lua",
 			"settings":
 			{
-				"buffer_size": 273,
+				"buffer_size": 450,
 				"encoding": "UTF-8",
 				"line_ending": "Unix",
 				"name": "local Class = require(\"pixcof.class\")"
@@ -626,7 +735,16 @@
 			"file": "package.json",
 			"settings":
 			{
-				"buffer_size": 357,
+				"buffer_size": 359,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "pixcof.sublime-project",
+			"settings":
+			{
+				"buffer_size": 269,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -823,15 +941,14 @@
 		"/home/canoi/Documentos/Projects/pixel-coffee",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets",
-		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets/animations",
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets/sprites",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets/tilemaps",
-		"/home/canoi/Documentos/Projects/pixel-coffee/src/assets/tilesets",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/objects",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/components",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/editors",
 		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/layers",
-		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/viewers"
+		"/home/canoi/Documentos/Projects/pixel-coffee/src/pixcof/types"
 	],
 	"file_history":
 	[
@@ -978,9 +1095,17 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": false,
+		"case_sensitive": true,
 		"find_history":
 		[
+			"resize",
+			"print",
+			"AnimationEditor",
+			"entity.x",
+			"self.x",
+			"Resources",
+			"Animation",
+			"Vector2",
 			"textin",
 			"print",
 			"newlayer",
@@ -1029,6 +1154,10 @@
 		"regex": false,
 		"replace_history":
 		[
+			"SpriteEditor",
+			"Sprite",
+			"Vector4",
+			"Vector3",
 			"extend",
 			"tilemap.camera",
 			"TilesetEditor",
@@ -1039,13 +1168,13 @@
 		"reverse": false,
 		"show_context": true,
 		"use_buffer2": true,
-		"whole_word": false,
+		"whole_word": true,
 		"wrap": true
 	},
 	"groups":
 	[
 		{
-			"selected": 26,
+			"selected": 35,
 			"sheets":
 			[
 				{
@@ -1070,10 +1199,10 @@
 							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 159.0,
+						"translation.y": 60.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 29,
+					"stack_index": 30,
 					"type": "text"
 				},
 				{
@@ -1099,10 +1228,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 331.0,
+						"translation.y": 200.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 40,
+					"stack_index": 41,
 					"type": "text"
 				},
 				{
@@ -1111,15 +1240,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2601,
+						"buffer_size": 3722,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2180,
-								2180
+								2188,
+								2188
 							]
 						],
 						"settings":
@@ -1127,10 +1256,10 @@
 							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 733.0,
+						"translation.y": 30.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
@@ -1139,15 +1268,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1818,
+						"buffer_size": 2328,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								335,
-								335
+								1368,
+								1368
 							]
 						],
 						"settings":
@@ -1156,27 +1285,55 @@
 							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 539.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
 					"buffer": 4,
-					"file": "src/pixcof/components/component.lua",
+					"file": "src/assets/sprites/boto.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 283,
+						"buffer_size": 130,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								233,
-								233
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 20,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "src/pixcof/components/component.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 325,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								302,
+								302
 							]
 						],
 						"settings":
@@ -1188,24 +1345,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 12,
+					"stack_index": 36,
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 6,
 					"file": "src/objects/player.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 349,
+						"buffer_size": 412,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								260,
-								260
+								391,
+								391
 							]
 						],
 						"settings":
@@ -1216,11 +1373,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 13,
+					"stack_index": 15,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 7,
 					"file": "src/main.lua",
 					"semi_transient": false,
 					"settings":
@@ -1244,24 +1401,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 42,
+					"stack_index": 40,
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 8,
 					"file": "src/pixcof/debug.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3165,
+						"buffer_size": 3218,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1027,
-								1027
+								836,
+								836
 							]
 						],
 						"settings":
@@ -1270,14 +1427,42 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 140.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 9,
+					"file": "src/pixcof/components/boxcomponent.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2002,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								891,
+								891
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 19,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
 					"file": "/home/canoi/Documentos/Projects/love2d/TestImGui/main.lua",
 					"semi_transient": false,
 					"settings":
@@ -1303,11 +1488,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 43,
+					"stack_index": 34,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 11,
 					"file": "src/pixcof/viewers/init.lua",
 					"semi_transient": false,
 					"settings":
@@ -1331,11 +1516,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 24,
+					"stack_index": 49,
 					"type": "text"
 				},
 				{
-					"buffer": 10,
+					"buffer": 12,
 					"file": "src/pixcof/editors/tileseteditor-old.lua",
 					"semi_transient": false,
 					"settings":
@@ -1359,24 +1544,24 @@
 						"translation.y": 2254.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 31,
+					"stack_index": 52,
 					"type": "text"
 				},
 				{
-					"buffer": 11,
+					"buffer": 13,
 					"file": "src/pixcof/editors/sceneeditor.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 17555,
+						"buffer_size": 18168,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								10615,
-								10620
+								13131,
+								13131
 							]
 						],
 						"settings":
@@ -1385,14 +1570,71 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 4339.0,
+						"translation.y": 5707.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
-					"buffer": 12,
+					"buffer": 14,
+					"file": "src/pixcof/editors/spriteeditor.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6742,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6493,
+								6493
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2438.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 15,
+					"file": "src/assets/sprites/dolphin.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 496,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 22,
+					"type": "text"
+				},
+				{
+					"buffer": 16,
 					"file": "src/pixcof/layers/backgroundlayer.lua",
 					"semi_transient": false,
 					"settings":
@@ -1404,8 +1646,8 @@
 						"selection":
 						[
 							[
-								905,
-								905
+								90,
+								90
 							]
 						],
 						"settings":
@@ -1413,14 +1655,14 @@
 							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 154.0,
+						"translation.y": 699.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 23,
+					"stack_index": 12,
 					"type": "text"
 				},
 				{
-					"buffer": 13,
+					"buffer": 17,
 					"file": "src/assets/tilesets/vulcan.lua",
 					"semi_transient": false,
 					"settings":
@@ -1444,24 +1686,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 46,
 					"type": "text"
 				},
 				{
-					"buffer": 14,
+					"buffer": 18,
 					"file": "src/pixcof/viewers/resourcesviewer.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 11128,
+						"buffer_size": 10832,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								764,
-								764
+								9127,
+								9127
 							]
 						],
 						"settings":
@@ -1470,14 +1712,14 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1956.0,
+						"translation.y": 4313.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 19,
+					"stack_index": 23,
 					"type": "text"
 				},
 				{
-					"buffer": 15,
+					"buffer": 19,
 					"file": "src/pixcof/viewers/fontviewer.lua",
 					"semi_transient": false,
 					"settings":
@@ -1502,11 +1744,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 33,
+					"stack_index": 54,
 					"type": "text"
 				},
 				{
-					"buffer": 16,
+					"buffer": 20,
 					"semi_transient": false,
 					"settings":
 					{
@@ -1664,11 +1906,11 @@
 						"translation.y": 1456.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 32,
+					"stack_index": 53,
 					"type": "text"
 				},
 				{
-					"buffer": 17,
+					"buffer": 21,
 					"file": "src/pixcof/viewers/imageviewer.lua",
 					"semi_transient": false,
 					"settings":
@@ -1693,24 +1935,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 34,
+					"stack_index": 55,
 					"type": "text"
 				},
 				{
-					"buffer": 18,
+					"buffer": 22,
 					"file": "src/objects/camaleao.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 616,
+						"buffer_size": 1158,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								470,
-								470
+								535,
+								535
 							]
 						],
 						"settings":
@@ -1721,24 +1963,53 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 16,
+					"stack_index": 18,
 					"type": "text"
 				},
 				{
-					"buffer": 19,
-					"file": "src/pixcof/animation.lua",
+					"buffer": 23,
+					"file": "src/pixcof/components/init.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2750,
+						"buffer_size": 319,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								477,
-								477
+								319,
+								319
+							]
+						],
+						"settings":
+						{
+							"auto_name": "",
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 37,
+					"type": "text"
+				},
+				{
+					"buffer": 24,
+					"file": "src/pixcof/animation.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2955,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1967,
+								1967
 							]
 						],
 						"settings":
@@ -1747,27 +2018,27 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 827.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 29,
 					"type": "text"
 				},
 				{
-					"buffer": 20,
-					"file": "src/assets/animations/boto.lua",
-					"semi_transient": true,
+					"buffer": 25,
+					"file": "src/pixcof/components/kinematiccomponent.lua",
+					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 173,
+						"buffer_size": 661,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								452,
+								452
 							]
 						],
 						"settings":
@@ -1778,11 +2049,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 17,
+					"stack_index": 24,
 					"type": "text"
 				},
 				{
-					"buffer": 21,
+					"buffer": 26,
 					"file": "src/pixcof/editors/animationeditor.lua",
 					"semi_transient": false,
 					"settings":
@@ -1804,14 +2075,14 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 682.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 25,
+					"stack_index": 26,
 					"type": "text"
 				},
 				{
-					"buffer": 22,
+					"buffer": 27,
 					"file": "src/pixcof/editors/tileseteditor.lua",
 					"semi_transient": false,
 					"settings":
@@ -1835,24 +2106,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 36,
+					"stack_index": 57,
 					"type": "text"
 				},
 				{
-					"buffer": 23,
+					"buffer": 28,
 					"file": "src/pixcof/resources.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5304,
+						"buffer_size": 6585,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5064,
-								5064
+								754,
+								754
 							]
 						],
 						"settings":
@@ -1861,14 +2132,127 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2577.0,
+						"translation.y": 380.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 18,
+					"stack_index": 14,
 					"type": "text"
 				},
 				{
-					"buffer": 24,
+					"buffer": 29,
+					"file": "src/pixcof/types/vector2.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1514,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1336,
+								1336
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 815.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 33,
+					"type": "text"
+				},
+				{
+					"buffer": 30,
+					"file": "src/pixcof/types/sprite.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3095,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2472,
+								2472
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 916.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 21,
+					"type": "text"
+				},
+				{
+					"buffer": 31,
+					"file": "src/pixcof/types/vector3.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1821,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1574,
+								1574
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 806.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 32,
+					"type": "text"
+				},
+				{
+					"buffer": 32,
+					"file": "src/pixcof/types/vector4.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2072,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2052,
+								2052
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1067.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 31,
+					"type": "text"
+				},
+				{
+					"buffer": 33,
 					"semi_transient": false,
 					"settings":
 					{
@@ -1892,11 +2276,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 44,
+					"stack_index": 60,
 					"type": "text"
 				},
 				{
-					"buffer": 25,
+					"buffer": 34,
 					"file": "src/pixcof/input.lua",
 					"semi_transient": false,
 					"settings":
@@ -1920,24 +2304,24 @@
 						"translation.y": 845.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 41,
+					"stack_index": 27,
 					"type": "text"
 				},
 				{
-					"buffer": 26,
+					"buffer": 35,
 					"file": "src/pixcof/layers/entitylayer.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3717,
+						"buffer_size": 3779,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1694,
-								1694
+								525,
+								525
 							]
 						],
 						"settings":
@@ -1946,27 +2330,140 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 537.0,
+						"translation.y": 966.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 27,
-					"file": "src/pixcof/layers/tilemaplayer.lua",
+					"buffer": 36,
+					"file": "src/pixcof/layers/spritelayer.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9548,
+						"buffer_size": 1074,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4024,
-								4024
+								1050,
+								1050
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 37,
+					"file": "src/pixcof/types/spriteobject.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 336,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								262,
+								262
+							]
+						],
+						"settings":
+						{
+							"auto_name": "local Entity =",
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				},
+				{
+					"buffer": 38,
+					"file": "src/assets/tilemaps/menu.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7749,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5666,
+								5666
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 1582.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 39,
+					"file": "src/assets/animations/camaleao.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 506,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 35,
+					"type": "text"
+				},
+				{
+					"buffer": 40,
+					"file": "src/pixcof/layers/tilemaplayer.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9765,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4453,
+								4453
 							]
 						],
 						"settings":
@@ -1975,14 +2472,14 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1183.0,
+						"translation.y": 1133.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 20,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 28,
+					"buffer": 41,
 					"file": "src/assets/tilesets/dungeon.lua",
 					"semi_transient": false,
 					"settings":
@@ -2006,11 +2503,11 @@
 						"translation.y": 624.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 21,
+					"stack_index": 47,
 					"type": "text"
 				},
 				{
-					"buffer": 29,
+					"buffer": 42,
 					"file": "src/pixcof/viewers/viewer.lua",
 					"semi_transient": false,
 					"settings":
@@ -2034,11 +2531,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 35,
+					"stack_index": 56,
 					"type": "text"
 				},
 				{
-					"buffer": 30,
+					"buffer": 43,
 					"file": "src/pixcof/tileset.lua",
 					"semi_transient": false,
 					"settings":
@@ -2063,24 +2560,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 26,
+					"stack_index": 50,
 					"type": "text"
 				},
 				{
-					"buffer": 31,
+					"buffer": 44,
 					"file": "src/pixcof/scene.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 8719,
+						"buffer_size": 9307,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4774,
-								4774
+								8188,
+								8188
 							]
 						],
 						"settings":
@@ -2089,55 +2586,27 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1831.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 32,
-					"file": "src/pixcof/layers/layer.lua",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 465,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								363,
-								363
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 3650.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 33,
-					"file": "src/pixcof/layers/init.lua",
+					"buffer": 45,
+					"file": "src/pixcof/layers/layer.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 232,
+						"buffer_size": 467,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								212,
-								212
+								340,
+								340
 							]
 						],
 						"settings":
@@ -2148,11 +2617,39 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 28,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
-					"buffer": 34,
+					"buffer": 46,
+					"file": "src/pixcof/layers/init.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 293,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								273,
+								273
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua Love/LuaLove.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 13,
+					"type": "text"
+				},
+				{
+					"buffer": 47,
 					"file": "/home/canoi/Documentos/Projects/love-typescript-template/typings/imgui.d.ts",
 					"semi_transient": false,
 					"settings":
@@ -2179,11 +2676,11 @@
 						"translation.y": 7833.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 45,
 					"type": "text"
 				},
 				{
-					"buffer": 35,
+					"buffer": 48,
 					"file": "/home/canoi/Documentos/Projects/Frameworks/pixel-coffee/src/pixcof/debug.lua",
 					"semi_transient": false,
 					"settings":
@@ -2208,11 +2705,11 @@
 						"translation.y": 2287.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 30,
+					"stack_index": 51,
 					"type": "text"
 				},
 				{
-					"buffer": 36,
+					"buffer": 49,
 					"file": "README.md",
 					"semi_transient": false,
 					"settings":
@@ -2224,8 +2721,8 @@
 						"selection":
 						[
 							[
-								94,
-								94
+								377,
+								377
 							]
 						],
 						"settings":
@@ -2236,11 +2733,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 49,
+					"stack_index": 38,
 					"type": "text"
 				},
 				{
-					"buffer": 37,
+					"buffer": 50,
 					"file": "src/assets/tilesets/forest.lua",
 					"semi_transient": false,
 					"settings":
@@ -2264,11 +2761,11 @@
 						"translation.y": 561.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 22,
+					"stack_index": 48,
 					"type": "text"
 				},
 				{
-					"buffer": 38,
+					"buffer": 51,
 					"file": "src/assets/tilemaps/forest.lua",
 					"semi_transient": false,
 					"settings":
@@ -2292,11 +2789,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 45,
+					"stack_index": 61,
 					"type": "text"
 				},
 				{
-					"buffer": 39,
+					"buffer": 52,
 					"file": "src/assets/tilemaps/novooooo.lua",
 					"semi_transient": false,
 					"settings":
@@ -2320,11 +2817,11 @@
 						"translation.y": 1271.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 47,
+					"stack_index": 63,
 					"type": "text"
 				},
 				{
-					"buffer": 40,
+					"buffer": 53,
 					"file": "src/assets/tilemaps/opaaa.lua",
 					"semi_transient": false,
 					"settings":
@@ -2348,11 +2845,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 46,
+					"stack_index": 62,
 					"type": "text"
 				},
 				{
-					"buffer": 41,
+					"buffer": 54,
 					"file": "src/pixcof/tilemap.lua",
 					"semi_transient": false,
 					"settings":
@@ -2377,11 +2874,11 @@
 						"translation.y": 6016.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 27,
+					"stack_index": 39,
 					"type": "text"
 				},
 				{
-					"buffer": 42,
+					"buffer": 55,
 					"file": "src/objects/enemy.lua",
 					"semi_transient": false,
 					"settings":
@@ -2405,24 +2902,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 11,
+					"stack_index": 16,
 					"type": "text"
 				},
 				{
-					"buffer": 43,
+					"buffer": 56,
 					"file": "src/objects/dolphin.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 402,
+						"buffer_size": 562,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								312,
-								312
+								447,
+								447
 							]
 						],
 						"settings":
@@ -2433,24 +2930,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 14,
+					"stack_index": 17,
 					"type": "text"
 				},
 				{
-					"buffer": 44,
+					"buffer": 57,
 					"file": "src/objects/boto.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 487,
+						"buffer_size": 484,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								431,
-								431
+								471,
+								471
 							]
 						],
 						"settings":
@@ -2461,11 +2958,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 15,
+					"stack_index": 44,
 					"type": "text"
 				},
 				{
-					"buffer": 45,
+					"buffer": 58,
 					"semi_transient": false,
 					"settings":
 					{
@@ -2489,24 +2986,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 48,
+					"stack_index": 64,
 					"type": "text"
 				},
 				{
-					"buffer": 46,
+					"buffer": 59,
 					"file": "src/pixcof/editors/init.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 361,
+						"buffer_size": 425,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								204,
-								204
+								405,
+								405
 							]
 						],
 						"settings":
@@ -2517,11 +3014,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 38,
+					"stack_index": 25,
 					"type": "text"
 				},
 				{
-					"buffer": 47,
+					"buffer": 60,
 					"file": "src/pixcof/editors/animationeditor-old.lua",
 					"semi_transient": false,
 					"settings":
@@ -2546,11 +3043,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 37,
+					"stack_index": 58,
 					"type": "text"
 				},
 				{
-					"buffer": 48,
+					"buffer": 61,
 					"file": "src/pixcof/editors/editor.lua",
 					"semi_transient": false,
 					"settings":
@@ -2574,24 +3071,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 39,
+					"stack_index": 59,
 					"type": "text"
 				},
 				{
-					"buffer": 49,
+					"buffer": 62,
 					"file": "src/pixcof/game.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 273,
+						"buffer_size": 450,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								255,
-								255
+								125,
+								125
 							]
 						],
 						"settings":
@@ -2603,24 +3100,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 10,
+					"stack_index": 28,
 					"type": "text"
 				},
 				{
-					"buffer": 50,
+					"buffer": 63,
 					"file": "package.json",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 357,
+						"buffer_size": 359,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								349,
-								349
+								339,
+								339
 							]
 						],
 						"settings":
@@ -2633,7 +3130,36 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 50,
+					"stack_index": 42,
+					"type": "text"
+				},
+				{
+					"buffer": 64,
+					"file": "pixcof.sublime-project",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 269,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								258,
+								258
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/zzz A File Icon zzz/aliases/JSON (Sublime).sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 43,
 					"type": "text"
 				}
 			]
@@ -2690,7 +3216,7 @@
 	"project": "pixcof.sublime-project",
 	"replace":
 	{
-		"height": 46.0
+		"height": 94.0
 	},
 	"save_all_on_build": true,
 	"select_file":

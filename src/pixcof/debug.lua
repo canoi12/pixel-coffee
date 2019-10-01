@@ -3,6 +3,9 @@ local Debug = Class:extend("Debug")
 local Editors = require("pixcof.editors")
 local Viewers = require("pixcof.viewers")
 local SceneManager = require("pixcof.scenemanager")
+
+local Vector2 = require("pixcof.types.vector2")
+
 local Input = require("pixcof.input")
 
 function Debug:constructor()
@@ -43,8 +46,20 @@ function Debug:beginDraw()
 	local w, h = lg.getDimensions()
 	local quad = love.graphics.newQuad(0, 0, w, h, 32, 32)
 	love.graphics.draw(self.bgimage, quad, 0, 0)
+end
 
-	if imgui.BeginMainMenuBar() then
+function Debug:endDraw() 
+
+	imgui.Render()
+end
+
+function Debug:draw() 
+	self:beginDraw()
+	imgui.SetNextWindowPos(0, 0)
+    imgui.SetNextWindowSize(love.graphics.getWidth(), love.graphics.getHeight())
+	if imgui.Begin("DockArea", nil, {"ImGuiWindowFlags_MenuBar", "ImGuiWindowFlags_NoDocking", "ImGuiWindowFlags_NoTitleBar", "ImGuiWindowFlags_NoResize", "ImGuiWindowFlags_NoMove", "ImGuiWindowFlags_NoBringToFrontOnFocus"}) then
+    	imgui.DockSpace(42)
+    	if imgui.BeginMainMenuBar() then
 		if imgui.BeginMenu("File") then
 			if imgui.MenuItem("Open", "Ctrl+O") then
 
@@ -57,7 +72,7 @@ function Debug:beginDraw()
 		end
 		if imgui.BeginMenu("View") then
 			for k,editor in pairs(self.editors) do
-				if imgui.MenuItem(editor.name, "", editor.open) then
+				if imgui.MenuItem(editor.__class, "", editor.open) then
 					editor.open = not editor.open
 				end
 			end
@@ -65,26 +80,10 @@ function Debug:beginDraw()
 		end
 		imgui.EndMainMenuBar()
 	end
-end
-
-function Debug:endDraw() 
-
-	imgui.Render()
-end
-
-function Debug:draw() 
-	self:beginDraw()
-	imgui.SetNextWindowPos(0, 0)
-    imgui.SetNextWindowSize(love.graphics.getWidth(), love.graphics.getHeight())
-	if imgui.Begin("DockArea", nil, { "ImGuiWindowFlags_NoTitleBar", "ImGuiWindowFlags_NoResize", "ImGuiWindowFlags_NoMove", "ImGuiWindowFlags_NoBringToFrontOnFocus" }) then
-    	imgui.BeginDockspace()
 		local editors_open = lume.filter(self.editors, function(x) return x.open end)
 		for k,editor in pairs(editors_open) do
 			editor:draw()
 		end
-
-	--SceneManager:draw()
-		imgui.EndDockspace()
 		imgui.End()
 	end
 	self:endDraw()

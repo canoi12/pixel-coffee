@@ -1,6 +1,6 @@
 local _={}
-_[11]={stframe=0,enframe=0,name="idle"}
-_[10]={stframe=0,enframe=3,name="walk"}
+_[11]={stframe=0,enframe=4,name="walk"}
+_[10]={stframe=0,enframe=0,name="idle"}
 _[9]={384,0,64,64}
 _[8]={320,0,64,64}
 _[7]={256,0,64,64}

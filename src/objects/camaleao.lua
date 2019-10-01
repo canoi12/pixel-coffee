@@ -1,7 +1,6 @@
 local Entity = require("pixcof.entity")
 local Animation = require("pixcof.animation")
-local SpriteComponent = require("pixcof.components.spritecomponent")
-local KinematicBody = require("pixcof.components.kinematiccomponent")
+local Components = require("pixcof.components")
 local Camaleao = Entity:extend("Camaleao")
 
 function Camaleao:constructor(x, y)
@@ -11,12 +10,15 @@ function Camaleao:constructor(x, y)
 	self.origin.y = self.animation.height/2
 	self.width = self.animation.width
 	self.height = self.animation.height]]
-	local spcomp = SpriteComponent(self, "camaleao")
-	spcomp:setOrigin("center", "center")
+	local spcomp = Components.SpriteComponent(self, "camaleao")
+	spcomp:setOrigin("center", 18)
 	self.animation = spcomp
-	self.body = KinematicBody(self, 100)
+	local collider = Components.BoxComponent(self)
+	collider:setBounds(7, 16, 26, 26)
+	self.body = Components.KinematicComponent(self, 100)
 	self:addComponent(spcomp)
 	self:addComponent(self.body)
+	self:addComponent(collider)
 	-- body
 end
 
@@ -25,10 +27,12 @@ function Camaleao:update(dt)
 	if lk.isDown("left") then
 		self.body:move(-1, 0)
 		self.animation:play("walk")
+		self.scale.x = -1
 	elseif lk.isDown("right") then
 		--self.x = self.x + 100 * dt
 		self.body:move(1, 0)
 		self.animation:play("walk")
+		self.scale.x = 1
 	else
 		self.animation:play("idle")
 	end

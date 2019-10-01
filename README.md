@@ -24,3 +24,11 @@ A tiny LÖVE framework to help to start and debug projects
  * love-imgui: https://github.com/slages/love-imgui
  * lume: https://github.com/rxi/lume
  * lurker: https://github.com/rxi/lurker
+
+### Gifs ###
+
+[Imgur](https://i.imgur.com/ibA7IVL.gifv)
+Some Features
+
+[Imgur](https://i.imgur.com/EO8QLSN.gifv)
+Entity-Component system

@@ -1,25 +1,18 @@
 local Viewer = require "pixcof.viewers.viewer"
 local Scene = require("pixcof.scene")
-local Animation = require("pixcof.animation")
+local Sprite = require("pixcof.types.sprite")
 local resources = require("pixcof.resources")
 local ImageViewer = require("pixcof.viewers.imageviewer")
 local FontViewer = require("pixcof.viewers.fontviewer")
-local AnimationEditor = require("pixcof.editors.animationeditor")
+local SpriteEditor = require("pixcof.editors.spriteeditor")
 local TilesetEditor = require("pixcof.editors.tileseteditor")
 local ResourcesViewer = Viewer:extend("ResourcesViewer")
 
 function ResourcesViewer:constructor(debug)
 	Viewer.constructor(self, debug)
 	self.open = true
-	self.currentImage = nil
-	self.currentFont = nil
-	self.currentAudio = nil
-	self.currentObject = nil
-	self.currentTileset = nil
-	self.currentMap = nil
 	self.assetType = nil
 	self.imageScale = 1
-	self.initColumns = false
 	self.txtCanvas = love.graphics.newCanvas()
 	self.txtCanvas:setFilter("nearest", "nearest")
 
@@ -34,9 +27,9 @@ function ResourcesViewer:constructor(debug)
 			open = false,
 			fn = self.openMapPopup
 		},
-		animation = {
+		sprite = {
 			open = false,
-			fn = self.openAnimationPopup
+			fn = self.openSpritePopup
 		},
 		tileset = {
 			open = false,
@@ -90,14 +83,14 @@ function ResourcesViewer:draw()
 			imgui.SetColumnWidth(1, cw*2)
 			self.initColumns = true
 		end]]
-		imgui.SetNextDockSplitRatio(0.1, 0.5)
-		if imgui.BeginDock("ResourcesViewer##resources_viewer_dock") then
+		--imgui.SetNextDockSplitRatio(0.1, 0.5)
+		if imgui.Begin("ResourcesViewer##resources_viewer_dock") then
 			--imgui.BeginChild("ResourcesViewer", 0, 0, false, "ImGuiWindowFlags_HorizontalScrollbar")
 			if imgui.SmallButton("reload") then
 				resources:init()
 			end
 			self:imageMenu()
-			self:animationMenu()
+			self:spriteMenu()
 			self:tilesetMenu()
 			self:fontMenu()
 			self:audioMenu()
@@ -123,15 +116,15 @@ function ResourcesViewer:draw()
 			end
 
 			--imgui.EndChild()
-			imgui.EndDock()
+			imgui.End()
 		end
 
 		if self.popup.tilemap.open then
 			imgui.OpenPopup("New Map")
 		end
 
-		if self.popup.animation.open then
-			imgui.OpenPopup("New Animation")
+		if self.popup.sprite.open then
+			imgui.OpenPopup("New Sprite")
 		end
 
 		if self.popup.tileset.open then
@@ -139,7 +132,7 @@ function ResourcesViewer:draw()
 		end
 
 		self:newMap()
-		self:newAnimation()
+		self:newSprite()
 		self:newTileset()
 
 		for k,viewer in pairs(self.viewers) do
@@ -257,18 +250,18 @@ function ResourcesViewer:audioMenu()
 	end
 end
 
-function ResourcesViewer:animationMenu()
-	if imgui.TreeNode("Animations") then
-		for k,animation in pairs(resources.animations) do
+function ResourcesViewer:spriteMenu()
+	if imgui.TreeNode("Sprites") then
+		for k,sprite in pairs(resources.sprites) do
 			if imgui.SmallButton("x##remove_animation_" .. k) then
 				self.viewers[k] = nil
-				resources:removeAnimation(k)
+				resources:removeSprite(k)
 			end
 			imgui.SameLine()
 			if imgui.Selectable(k) then
-				self.viewers[k] = AnimationEditor:new(self.debug, k, animation)
+				self.viewers[k] = SpriteEditor:new(self.debug, k, sprite)
 			end
-			local image = resources:getImage(animation.image)
+			local image = resources:getImage(sprite.image)
 			imgui.SameLine()
 			imgui.Image(image, 16, 16)
 		end
@@ -284,12 +277,12 @@ function ResourcesViewer:openMapPopup()
 	self.popup.tilemap.open = true
 end
 
-function ResourcesViewer:openAnimationPopup()
-	self.popup.animation.name = ""
-	self.popup.animation.width = 16
-	self.popup.animation.height = 16
-	self.popup.animation.image = ""
-	self.popup.animation.open = true
+function ResourcesViewer:openSpritePopup()
+	self.popup.sprite.name = ""
+	self.popup.sprite.width = 16
+	self.popup.sprite.height = 16
+	self.popup.sprite.image = ""
+	self.popup.sprite.open = true
 end
 
 function ResourcesViewer:openTilesetPopup()
@@ -322,30 +315,30 @@ function ResourcesViewer:newMap()
 	end
 end
 
-function ResourcesViewer:newAnimation()
-	if imgui.BeginPopupModal("New Animation", nil, {"ImGuiWindowFlags_NoMove", "ImGuiWindowFlags_NoResize", "ImGuiWindowFlags_AlwaysAutoResize"}) then
-		self.popup.animation.name = imgui.InputText("name", self.popup.animation.name, 32)
+function ResourcesViewer:newSprite()
+	if imgui.BeginPopupModal("New Sprite", nil, {"ImGuiWindowFlags_NoMove", "ImGuiWindowFlags_NoResize", "ImGuiWindowFlags_AlwaysAutoResize"}) then
+		self.popup.sprite.name = imgui.InputText("name", self.popup.sprite.name, 32)
 
 		local keys = lume.keys(resources.images)
-		local index = lume.find(keys, self.popup.animation.image) or 1
+		local index = lume.find(keys, self.popup.sprite.image) or 1
 		index = imgui.Combo("image##animation_image", index, keys, #keys)
-		self.popup.animation.image = keys[index]
+		self.popup.sprite.image = keys[index]
 
-		self.popup.animation.width, self.popup.animation.height = imgui.InputInt2("size", self.popup.animation.width, self.popup.animation.height)
+		self.popup.sprite.width, self.popup.sprite.height = imgui.InputInt2("size", self.popup.sprite.width, self.popup.sprite.height)
 		imgui.Separator()
 		if imgui.SmallButton("ok") or lk.isDown("return") then
 			--[[local scene = Scene:generateTable(self.popup.tilemap)
 			resources:saveTilemap(scene.name, scene)]]
-			local animation = Animation:generateTable(self.popup.animation)
-			resources:saveAnimation(animation.name, animation)
+			local sprite = Sprite:generateTable(self.popup.sprite)
+			resources:saveSprite(sprite.name, sprite)
 
 			imgui.CloseCurrentPopup()
-			self.popup.animation.open = false
+			self.popup.sprite.open = false
 		end
 		imgui.SameLine()
 		if imgui.SmallButton("cancel") or lk.isDown("escape") then 
 			imgui.CloseCurrentPopup() 
-			self.popup.animation.open = false
+			self.popup.sprite.open = false
 		end
 		imgui.EndPopup()	
 	end

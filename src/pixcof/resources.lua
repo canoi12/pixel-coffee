@@ -9,6 +9,7 @@ local Resources = {
 	images = {},
 	tilesets = {},
 	tilemaps = {},
+	sprites = {},
 	animations = {},
 	fonts = {},
 	audio = {},
@@ -35,7 +36,9 @@ function Resources:init()
 	end
 
 	self:loadTilesets()
+	self:loadSprites()
 	self:loadAnimations()
+	self:loadSystemImages()
 	self:loadSystemFonts()
 	self:loadTilemaps()
 
@@ -56,6 +59,18 @@ function Resources:initImages()
 	for k,v in pairs(self.images) do
 		v:setFilter("nearest", "nearest")
 	end
+end
+
+function Resources:loadSystemImages()
+	local images_path = "pixcof/assets/images/"
+	for i,v in ipairs(getItems(images_path)) do
+		if string.sub(v, -3) == "png" then
+			local name = string.sub(v, 1, -5)
+			--self:loadFont(name, fonts_path .. v)
+			self.images[name] = lg.newImage(images_path .. v)
+		end
+	end
+
 end
 
 function Resources:loadScene(path)
@@ -108,6 +123,10 @@ function Resources:getAnimation(name)
 	return self.animations[name] or {}
 end
 
+function Resources:getSprite(name)
+	return self.sprites[name] or {}
+end
+
 function Resources:getTileset(name)
 	return self.tilesets[name] or {}
 end
@@ -121,6 +140,14 @@ function Resources:loadAnimations()
 	for i,animation in ipairs(animations) do
 		local name = lume.split(animation, ".")[1]
 		self.animations[name] = require("assets/animations/" .. name)
+	end
+end
+
+function Resources:loadSprites()
+	local sprites = getItems("assets/sprites/")
+	for i,sprite in ipairs(sprites) do
+		local name = lume.split(sprite, ".")[1]
+		self.sprites[name] = require("assets/sprites/" .. name)
 	end
 end
 
@@ -140,6 +167,19 @@ function Resources:loadTilemaps()
 		local name = lume.split(tilemap, ".")[1]
 		self.tilemaps[name] = require("assets/tilemaps/" .. name)
 	end
+end
+
+function Resources:saveSprite(name, sprite)
+	local sprites_path = "assets/sprites/"
+	if not lf.getInfo(sprites_path) then
+		lfs.mkdir("src/" .. sprites_path)
+	end
+
+	local data = serialize(sprite)
+	local f = io.open("src/" .. sprites_path .. name .. ".lua", "w")
+	f:write(data)
+	f:close()
+	self.sprites[name] = sprite
 end
 
 function Resources:saveAnimation(name, animation)
@@ -189,6 +229,16 @@ function Resources:removeAnimation(name)
 	os.remove("src/" .. animation_path .. name .. ".lua")
 	self.animations[name] = nil
 	--self:loadAnimations()
+end
+
+function Resources:removeSprite(name)
+	local sprites_path = "assets/sprites/"
+	--print(animation_path .. name .. ".lua")
+	if not love.filesystem.getInfo(sprites_path .. name .. ".lua") then
+		return
+	end
+	os.remove("src/" .. sprites_path .. name .. ".lua")
+	self.sprites[name] = nil
 end
 
 function Resources:removeTileset(name)
