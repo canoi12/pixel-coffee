@@ -31,7 +31,7 @@ A tiny LÖVE framework to help to start and debug projects
 Just include `pixcof` folder and `imgui.so` in your project folder.
 And run `love (project_folder) -debug` to open the editor
 
-If you download this repo, just use yarn:
+If you download this repo template, just use yarn:
  - `yarn start` to run game
  - `yarn debug` to run the editor
 
