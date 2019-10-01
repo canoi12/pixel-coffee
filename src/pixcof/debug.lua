@@ -20,8 +20,11 @@ function Debug:constructor()
 		scene = Editors.SceneEditor:new(self),
 		--[[animation = Editors.AnimationEditor:new(),
 		tileset = Editors.TilesetEditor:new(self),]]
-		resources = Viewers.ResourcesViewer:new(self)
+		resources = Viewers.ResourcesViewer:new(self),
+		log = Viewers.LogViewer(self)
 	}
+
+	self:Log("Debug initialized")
 end
 
 function Debug:openMap(map)
@@ -48,8 +51,7 @@ function Debug:beginDraw()
 	love.graphics.draw(self.bgimage, quad, 0, 0)
 end
 
-function Debug:endDraw() 
-
+function Debug:endDraw()
 	imgui.Render()
 end
 
@@ -60,36 +62,40 @@ function Debug:draw()
 	if imgui.Begin("DockArea", nil, {"ImGuiWindowFlags_MenuBar", "ImGuiWindowFlags_NoDocking", "ImGuiWindowFlags_NoTitleBar", "ImGuiWindowFlags_NoResize", "ImGuiWindowFlags_NoMove", "ImGuiWindowFlags_NoBringToFrontOnFocus"}) then
     	imgui.DockSpace(42)
     	if imgui.BeginMainMenuBar() then
-		if imgui.BeginMenu("File") then
-			if imgui.MenuItem("Open", "Ctrl+O") then
+			if imgui.BeginMenu("File") then
+				if imgui.MenuItem("Open", "Ctrl+O") then
 
-			end
-			if imgui.MenuItem("Save", "Ctrl+S") then end
-			if imgui.MenuItem("Exit", "Ctrl+Q") then 
-				self:Log("Gudbai")
-			end
-			imgui.EndMenu()
-		end
-		if imgui.BeginMenu("View") then
-			for k,editor in pairs(self.editors) do
-				if imgui.MenuItem(editor.__class, "", editor.open) then
-					editor.open = not editor.open
 				end
+				if imgui.MenuItem("Save", "Ctrl+S") then end
+				if imgui.MenuItem("Exit", "Ctrl+Q") then 
+					self:Log("Gudbai")
+				end
+				imgui.EndMenu()
 			end
-			imgui.EndMenu()
+			if imgui.BeginMenu("View") then
+				for k,editor in pairs(self.editors) do
+					if imgui.MenuItem(editor.__class, "", editor.open) then
+						editor.open = not editor.open
+					end
+				end
+				imgui.EndMenu()
+			end
+			imgui.EndMainMenuBar()
 		end
-		imgui.EndMainMenuBar()
-	end
 		local editors_open = lume.filter(self.editors, function(x) return x.open end)
 		for k,editor in pairs(editors_open) do
 			editor:draw()
 		end
+		--imgui.ShowDemoWindow()
 		imgui.End()
 	end
 	self:endDraw()
 end
 
-function Debug:Log(...) end
+function Debug:Log(...)
+	self.editors.log:pushLog(...)
+end
+
 
 function Debug:initImGui() 
 	love.textinput = function(t)

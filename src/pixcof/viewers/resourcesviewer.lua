@@ -238,6 +238,7 @@ function ResourcesViewer:mapMenu()
 			imgui.SameLine()
 			if imgui.Selectable(k) then
 				self.debug:openMap(map)
+				self.debug:Log("Open", map.name, "Scene")
 			end
 		end
 		imgui.TreePop()

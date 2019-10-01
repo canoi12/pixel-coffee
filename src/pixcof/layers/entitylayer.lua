@@ -93,41 +93,13 @@ function EntityLayer:debug(editor)
 	imgui.InputText("##filter_object", "", 32)
 
 	local ww = imgui.GetWindowWidth()
-	if imgui.BeginChildFrame(123, ww, 196) then
-		--self:drawObjectSelector()
-		imgui.Text("Instances")
-		imgui.Unindent()
-		for i,entity in ipairs(self.entities) do
-			imgui.SetNextTreeNodeOpen(false)
-			if editor.map.activeEntity == entity then imgui.SetNextTreeNodeOpen(true) end
-			if imgui.TreeNode(entity.__class .. "##entity_" .. i .. "_" .. self.name .. "_" .. entity.__class) then
-				--imgui.Unindent()
-				--[[entity.x, entity.y = imgui.DragInt2("position##entity_position_" .. i .. "_" .. entity.__class, entity.x, entity.y)
-				local angle = math.deg(entity.angle)
-				angle = imgui.DragInt("angle##entity_angle_" .. i .. "_" .. entity.__class, angle)
-				entity.angle = math.rad(angle)
-				entity.scale.x, entity.scale.y = imgui.DragFloat2("scale##entity_scale_" .. i .. "_" .. entity.__class, entity.scale.x, entity.scale.y)
-				--imgui.Indent()
-				if imgui.TreeNode("Components") then
-					for i,v in ipairs(entity.components) do
-						if imgui.TreeNode(v.__class) then
-							v:debug()
-							imgui.TreePop()
-						end
-					end
-					imgui.TreePop()
-				end
-				if editor.map.activeEntity ~= entity then
-					editor.tilemap.camera.x = -entity.x*editor.viewer.zoom + editor.viewer.width/2
-					editor.tilemap.camera.y = -entity.y*editor.viewer.zoom + editor.viewer.height/2
-				end
-				editor.map.activeEntity = entity]]
-				entity:debug(editor)
-				imgui.TreePop()
-			end
+	imgui.Text("Instances")
+	for i,entity in ipairs(self.entities) do
+		imgui.SetNextTreeNodeOpen(false)
+		if editor.map.activeEntity == entity then imgui.SetNextTreeNodeOpen(true) end
+		if imgui.CollapsingHeader(entity.__class .. "##entity_" .. i .. "_" .. self.name .. "_" .. entity.__class, null, "ImGuiTreeNodeFlags_Framed") then
+			entity:debug(editor)
 		end
-		imgui.Indent()
-		imgui.EndChildFrame()
 	end
 end
 

@@ -12,6 +12,7 @@ function Entity:constructor(x, y)
 	self.height = 16
 	self.animation = nil
 	self.image = nil
+	self.active = true
 	--[[self.centerx = 0
 	self.centery = 0]]
 end
@@ -38,13 +39,17 @@ end
 
 function Entity:update(dt)
 	--if self.animation and self.animation:is("Animation") then self.animation:update(dt) end
-	lume.each(self.components, "update", dt)
+	if self.active then
+		lume.each(self.components, "update", dt)
+	end
 end
 
 function Entity:draw()
 	--[[if self.animation and self.animation:is("Animation") then self.animation:drawEntity(self) 
 	elseif self.image then lg.draw(self.image, self.x, self.y, self.angle, self.scale.x, self.scale.y, self.origin.x, self.origin.y) end]]
-	lume.each(self.components, "draw")
+	if self.active then
+		lume.each(self.components, "draw")
+	end
 end
 
 function Entity:debugDraw(active)
@@ -81,6 +86,7 @@ function Entity:debugDraw(active)
 end
 
 function Entity:debug(editor)
+	self.active = imgui.Checkbox("active##entity_active_" .. self.__class, self.active)
 	self.position.x, self.position.y = imgui.DragInt2("position##entity_position_" .. self.__class, self.position.x, self.position.y)
 	local angle = math.deg(self.angle)
 	angle = imgui.DragInt("angle##entity_angle_" .. self.__class, angle)
@@ -100,7 +106,7 @@ function Entity:debug(editor)
 		editor.tilemap.camera.x = -self.position.x*editor.viewer.zoom + editor.viewer.width/2
 		editor.tilemap.camera.y = -self.position.y*editor.viewer.zoom + editor.viewer.height/2
 	end
-				editor.map.activeEntity = self
+	editor.map.activeEntity = self
 end
 
 function Entity:isHovering(x, y)

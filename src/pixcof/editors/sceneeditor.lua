@@ -108,11 +108,13 @@ function SceneEditor:draw()
 	if imgui.Begin("Scene Viewer##scene_viewer") then
 		local wpos = {imgui.GetWindowPos()}
 		--local wpos = {imgui.GetCursorPos()}
-		self.viewer.width, self.viewer.height = imgui.GetWindowSize()
+		self.viewer.width, self.viewer.height = imgui.GetContentRegionAvail()
 		local umpos = {imgui.GetMousePos()}
+		local cpos = {imgui.GetCursorPos()}
 		--local mpos = {}
-		umpos[1] = umpos[1] - wpos[1] - 8
-		umpos[2] = umpos[2] - wpos[2] - 8 + imgui.GetScrollY()
+		
+		umpos[1] = umpos[1] - wpos[1] - cpos[1]
+		umpos[2] = umpos[2] - wpos[2] - cpos[2]
 		local mpos = {
 			math.floor((umpos[1]-self.tilemap.camera.x)/(self.map.tilewidth*self.viewer.zoom))*self.map.tilewidth,
 			math.floor((umpos[2]-self.tilemap.camera.y)/(self.map.tileheight*self.viewer.zoom))*self.map.tileheight
@@ -220,8 +222,8 @@ function SceneEditor:draw()
 		lg.setCanvas()
 
 		imgui.Image(self.canvas, self.viewer.width, self.viewer.height)
-		imgui.End()
 	end
+	imgui.End()
 
 	--[[imgui.SetNextDock("ImGuiDockSlot_Left")
 	imgui.SetNextDockSplitRatio(0.2, 0.2)]]
@@ -242,8 +244,8 @@ function SceneEditor:draw()
 		if imgui.SmallButton("save scene") then
 			self:saveTilemap()
 		end
-		imgui.End()
 	end
+	imgui.End()
 
 	--[[imgui.SetNextDock("ImGuiDockSlot_Bottom")
 	imgui.SetNextDockSplitRatio(0.2, 0.7)]]
@@ -279,6 +281,7 @@ function SceneEditor:draw()
 			self.popups.layer = true
 			self.layerEdit.name = ""
 		end
+
 		if self.tilemap then
 			imgui.SameLine()
 			if imgui.SmallButton("up") then self.currentLayer = self.tilemap:upLayer(layer) end
@@ -337,8 +340,8 @@ function SceneEditor:draw()
 				imgui.EndChildFrame()
 			end]]
 			--imgui.Separator()
-			imgui.End()
 		end
+		imgui.End()
 
 		--[[imgui.SetNextDock("ImGuiDockSlot_Bottom")
 		imgui.SetNextDockSplitRatio(0.2, 0.5)]]
@@ -346,18 +349,8 @@ function SceneEditor:draw()
 			if layer.debug then
 				layer:debug(self)
 			end
-			imgui.End()
 		end
-
-		--imgui.SetNextDock("ImGuiDockSlot_Bottom")
-
-		--imgui.PopID()
-
-
-		--[[imgui.SetNextDock("ImGuiDockSlot_Bottom")
-		if imgui.BeginDock("Debug Log") then
-			imgui.EndDock()
-		end]]
+		imgui.End()
 
 		--local tst = imgui.Dock
 		--print(tst)

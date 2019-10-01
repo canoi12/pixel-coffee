@@ -7,7 +7,7 @@ A tiny LÖVE framework to help to start and debug projects
  - [x] Tileset editor
  - [x] Animation editor
  - [x] Resources viewer
- - [ ] Log
+ - [x] Log
  - [ ] Console
  - [ ] Debug
  - [x] Resources manager

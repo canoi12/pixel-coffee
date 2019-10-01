@@ -322,18 +322,18 @@ function TilemapLayer:debug(editor)
 	index = imgui.Combo("tilesets##layer_select_tileset", index, keys, #keys)
 	self:changeTileset(keys[index])
 
-	local ww = imgui.GetWindowWidth()
-	if imgui.BeginChildFrame(123, ww, 196) then
-		local layer = self
-		local tileset = layer.tileset
-		--local image = Resources:getImage(tileset.image)
-		local image = layer.tileset.image
-		local imagew, imageh = image:getDimensions()
-		local maxtilew = image:getWidth()/tileset.tilew
-		local maxtileh = image:getHeight()/tileset.tileh
+	local layer = self
+	local tileset = layer.tileset
+	--local image = Resources:getImage(tileset.image)
+	local image = layer.tileset.image
+	local imagew, imageh = image:getDimensions()
+	local maxtilew = image:getWidth()/tileset.tilew
+	local maxtileh = image:getHeight()/tileset.tileh
 
-		if imgui.TreeNodeEx("Tiles") then
-			imgui.Unindent()
+	local ww = imgui.GetWindowWidth()
+	local tab_open = imgui.BeginTabBar("tiles tab") 
+	if tab_open then
+		if imgui.BeginTabItem("Tiles") then
 			for i,qquad in ipairs(tileset.quads) do
 				--print(quad)
 				local quad = {qquad:getViewport()}
@@ -343,7 +343,6 @@ function TilemapLayer:debug(editor)
 				local hh = quad[4]/imageh
 
 				if imgui.ImageButton(image, 32, 32, xx, yy, xx+ww, yy+hh, 2) then
-					--print(i)
 					editor.map.currentTile = i
 					editor.map.autotile = false
 				end
@@ -352,12 +351,10 @@ function TilemapLayer:debug(editor)
 					imgui.NewLine()
 				end
 			end
-			imgui.Indent()
-			imgui.TreePop()
+			imgui.EndTabItem()
 		end
 
-		if imgui.TreeNodeEx("AutoTiles") then
-			imgui.Unindent()
+		if imgui.BeginTabItem("AutoTiles") then
 			for i,v in ipairs(tileset.autotiles) do
 				local _,index = lume.match(v, function(x) return x ~= -1 end)
 				if lume.any(v, function(x) return x == 0 end) then
@@ -386,12 +383,30 @@ function TilemapLayer:debug(editor)
 					imgui.NewLine()
 				end
 			end
+			imgui.EndTabItem()
+		end
+	end
+	imgui.EndTabBar()
+
+
+	--[[if imgui.BeginChildFrame(123, ww, 196) then
+
+		if imgui.TreeNodeEx("Tiles") then
+			imgui.Unindent()
+			
+			imgui.Indent()
+			imgui.TreePop()
+		end
+
+		if imgui.TreeNodeEx("AutoTiles") then
+			imgui.Unindent()
+			
 			
 			imgui.Indent()
 			imgui.TreePop()
 		end
 		imgui.EndChildFrame()
-	end
+	end]]
 end
 
 return TilemapLayer
