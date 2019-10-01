@@ -27,8 +27,8 @@ A tiny LÖVE framework to help to start and debug projects
 
 ### Gifs ###
 
-![Imgur](https://i.imgur.com/ibA7IVL.gifv)
+![Imgur](https://i.imgur.com/ibA7IVL.gif)
 Some Features
 
-![Imgur](https://i.imgur.com/EO8QLSN.gifv)
+![Imgur](https://i.imgur.com/EO8QLSN.gif)
 Entity-Component system
