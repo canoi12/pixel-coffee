@@ -11,3 +11,4 @@ function Player:constructor(x, y)
 end
 
 return Player
+

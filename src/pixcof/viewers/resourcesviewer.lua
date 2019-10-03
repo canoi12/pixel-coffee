@@ -42,6 +42,7 @@ function ResourcesViewer:constructor(debug)
 		image = self.imageViewer
 	}]]
 	self.viewers = {}
+	self.scripts = {}
 	self.text = love.graphics.newText(resources.fonts.minimal4, "abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVWXYZ")
 end
 
@@ -141,6 +142,32 @@ function ResourcesViewer:draw()
 			end
 			viewer:draw()
 		end
+
+		for i,script in ipairs(self.scripts) do
+			local open = imgui.Begin(script.name, true, "ImGuiWindowFlags_MenuBar")
+			if open then
+				if imgui.BeginMenuBar() then
+					if imgui.BeginMenu("File") then
+						if imgui.MenuItem("Save", "Ctrl-S") then
+							local scr = imgui.TextEditorGetText(script.name)
+							--print(scr)
+							local f = io.open(script.path, "w")
+							f:write(scr)
+							io.close(f)
+
+							self.debug:Log(script.name .. " saved")
+						end
+						imgui.EndMenu()
+					end
+					imgui.EndMenuBar()
+				end
+				imgui.TextEditorMenu(script.name)
+				imgui.RenderTextEditor(script.name)
+			else
+				lume.remove(self.scripts, script)
+			end
+			imgui.End()
+		end
 		--[[imgui.NextColumn()
 		
 		if self.open then
@@ -198,6 +225,10 @@ end
 function ResourcesViewer:objectMenu()
 	if imgui.TreeNodeEx("Objects") then
 		for k,object in pairs(resources.objects) do
+			if imgui.SmallButton("..##open_object_" .. k .. "_src") then
+				self:openScript(k)
+			end
+			imgui.SameLine()
 			if imgui.Selectable(k) then
 				local sceneeditor = self.debug.editors.scene
 				if sceneeditor then
@@ -378,6 +409,26 @@ function ResourcesViewer:newTileset()
 			self.popup.tileset.open = false
 		end
 		imgui.EndPopup()	
+	end
+end
+
+function ResourcesViewer:openScript(name)
+	local l_name = name:lower()
+	local path = "src/objects/" .. l_name .. ".lua"
+	--local f = io.open()
+	local cont = ""
+	for line in io.lines(path) do
+		cont = cont .. line .. "\n"
+	end
+	--io.close(f)
+
+	if not lume.any(self.scripts, function(x) return x == "Script_" .. name end) then
+		local script = {
+			name = "Script_" .. name,
+			path = path
+		}
+		imgui.TextEditorSetText("Script_" .. name, cont)
+		lume.push(self.scripts, script)
 	end
 end
 
