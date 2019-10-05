@@ -4,11 +4,10 @@ local Components = require("pixcof.components")
 
 function Player:constructor(x, y)
 	Entity.constructor(self, x, y)
-	local spcomp = Components.SpriteComponent(self, "knight")
-	spcomp:setOrigin("center", "center")
-	self:addComponent(spcomp)
-	self:addComponent(Components.BoxComponent(self):setBounds(22, 30, 41, 41))
+	--[[local spcomp = Components.SpriteComponent(self, "knight")
+	spcomp:setOrigin("center", "center")]]
+	self:addComponent(Components.SpriteComponent, "knight")
+	self:addComponent(Components.BoxComponent, 20, 31, 40, 40)
 end
 
 return Player
-

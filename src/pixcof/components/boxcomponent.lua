@@ -1,17 +1,17 @@
 local Component = require("pixcof.components.component")
 local BoxComponent = Component:extend("BoxComponent")
 
-function BoxComponent:constructor(entity)
+function BoxComponent:constructor(entity, left, top, right, down)
 	self.super.constructor(self, entity)
-	local sprcomp = entity:getComponent("SpriteComponent")
-	self.left = 0
-	self.top = 0
-	self.right = 32
-	self.bottom = 32
-	if sprcomp then
+	--local sprcomp = entity:getComponent("SpriteComponent")
+	self.left = left or 0
+	self.top = top or 0
+	self.right = right or 0
+	self.bottom = down or 0
+	--[[if sprcomp then
 		self.right = sprcomp.width
-		self.bpttom = sprcomp.height
-	end
+		self.bottom = sprcomp.height
+	end]]
 end
 
 function BoxComponent:getLeft()

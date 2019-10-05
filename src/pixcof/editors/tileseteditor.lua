@@ -200,130 +200,146 @@ function TilesetEditor:calcValueFromMask(mask)
 	return value
 end
 function TilesetEditor:autoTileEditor()
-    if imgui.BeginChild("autoTileEditor", 0, 0, false, {"ImGuiWindowFlags_HorizontalScrollbar", "ImGuiWindowFlags_NoMove"}) then
-        local tileset = self.editAutotile
-        local image = self.tilesetViewerProps.image
-        local imgw, imgh = self.tilesetViewerProps.image_width, self.tilesetViewerProps.image_height
-        local tilew, tileh = self.asset.tileset.tilew, self.asset.tileset.tileh
-        local maxtilew, maxtileh = imgw/tilew, imgh/tileh
-        local ww = imgui.GetWindowWidth()
-        local mouse_x, mouse_y = imgui.GetMousePos()
-        local window_x, window_y = imgui.GetWindowPos()
-        local scale = 2
+    --if imgui.BeginChild("autoTileEditor", 0, 0, false, {"ImGuiWindowFlags_HorizontalScrollbar", "ImGuiWindowFlags_NoMove"}) then
+    if imgui.BeginTabBar("AutoTileEditor") then
+        if imgui.BeginTabItem("BitMask") then
+            local tileset = self.editAutotile
+            local image = self.tilesetViewerProps.image
+            local imgw, imgh = self.tilesetViewerProps.image_width, self.tilesetViewerProps.image_height
+            local tilew, tileh = self.asset.tileset.tilew, self.asset.tileset.tileh
+            local maxtilew, maxtileh = imgw/tilew, imgh/tileh
+            local ww = imgui.GetWindowWidth()
+            local mouse_x, mouse_y = imgui.GetMousePos()
+            local contw, conth = imgui.GetContentRegionAvail()
 
-        mouse_x, mouse_y = (mouse_x - window_x - imgui.GetScrollX())/scale, (mouse_y - window_y + imgui.GetScrollY())/scale
+            local window_x, window_y = imgui.GetCursorScreenPos()
+            local scale = 2
 
-        --[[imgui.Text("mouse: " .. mouse_x .. "x" .. mouse_y)
-        local local_x, local_y = mouse_x-window_x, mouse_y-window_y
-        imgui.SameLine()
-        local pos = math.floor(local_x/(tilew*scale)) + (maxtilew*math.floor(local_y/(tileh*scale)))
-		imgui.Text("pos: " .. math.max(pos, 0))
-        imgui.SameLine()
-        imgui.PushItemWidth(96)
-        imgui.DragInt("scale", 2)
-        imgui.PopItemWidth()
-        ]]
-        local canvas = lg.newCanvas(image:getDimensions())
-        canvas:setFilter("nearest", "nearest")
+            mouse_x, mouse_y = (mouse_x - window_x - imgui.GetScrollX())/scale, (mouse_y - window_y + imgui.GetScrollY())/scale
 
-        for imgi, quad in ipairs(self.tilesetViewerProps.quads) do
-            local xxx = math.fmod(imgi-1, maxtilew)
-            local yyy = math.floor((imgi-1)/maxtilew)
-            local imgbtnx = xxx/maxtilew
+            --[[imgui.Text("mouse: " .. mouse_x .. "x" .. mouse_y)
+            local local_x, local_y = mouse_x-window_x, mouse_y-window_y
+            imgui.SameLine()
+            local pos = math.floor(local_x/(tilew*scale)) + (maxtilew*math.floor(local_y/(tileh*scale)))
+    		imgui.Text("pos: " .. math.max(pos, 0))
+            imgui.SameLine()
+            imgui.PushItemWidth(96)
+            imgui.DragInt("scale", 2)
+            imgui.PopItemWidth()
+            ]]
+            local canvas = lg.newCanvas(image:getDimensions())
+            canvas:setFilter("nearest", "nearest")
 
-
-            local imgbtny = 1/maxtilew*yyy
-            local imgbtnw = (1/maxtilew)/3
-            local imgbtnh = (1/maxtileh)/3
+            for imgi, quad in ipairs(self.tilesetViewerProps.quads) do
+                local xxx = math.fmod(imgi-1, maxtilew)
+                local yyy = math.floor((imgi-1)/maxtilew)
+                local imgbtnx = xxx/maxtilew
 
 
-            if imgi-1 > 0 and xxx == 0 then
-                --imgui.NewLine()
-                --imgui.Separator()
-            end
+                local imgbtny = 1/maxtilew*yyy
+                local imgbtnw = (1/maxtilew)/3
+                local imgbtnh = (1/maxtileh)/3
 
-            --imgui.BeginGroup()
-            --imgui.PushStyleVar("ImGuiStyleVar_ItemSpacing", 1, 2)
-            
-            local mask = self:calcMask(tileset.tiles[imgi])
-		    lg.setCanvas(canvas)
-		    local view = {quad:getViewport()}
-            lg.draw(image, quad, view[1], view[2])
-            love.graphics.setBlendMode('alpha', 'alphamultiply') 
-            for i=0,8 do
-            	local mask_index = i + 1
 
-            	local tx = math.fmod(i, 3)*(tilew/3)
-            	local ty = math.floor(i/3)*(tileh/3)
-            	local tw = tilew/3
-            	local th = tileh/3
-
-                --[[local ii = math.fmod(i, 3)
-                local ji = math.floor(i/3)
-                local tx = imgbtnx + (ii/maxtilew)/3
-                local tw = tx + imgbtnw
-                local ty = imgbtny + (ji/maxtileh)/3
-                local th = ty + imgbtnh]]
-
-                --[[if i > 0 and ii == 0 then
-                    imgui.NewLine()
-                end]]
-
-                if imgui.IsMouseDown(0) then
-                	--print(mouse_x, mouse_y, view[1] + tx, view[2] + ty, view[1] + (tx + tw), view[2] + ty + th)
-                	if mouse_x >= view[1] + tx and mouse_x < view[1] + tx + tw and mouse_y >= view[2] + ty and mouse_y < view[2] + ty + th then 
-                		print("teste", i)
-                		mask[mask_index] = 1
-                	end
-                elseif imgui.IsMouseDown(1) then
-                	--print(mouse_x, mouse_y, view[1] + tx, view[2] + ty, view[1] + (tx + tw), view[2] + ty + th)
-                	if mouse_x >= view[1] + tx and mouse_x < view[1] + tx + tw and mouse_y >= view[2] + ty and mouse_y < view[2] + ty + th then 
-                		--print("teste", i)
-                		mask[mask_index] = 0
-                	end
+                if imgi-1 > 0 and xxx == 0 then
+                    --imgui.NewLine()
+                    --imgui.Separator()
                 end
 
-                local color = {1, 0, 0, 0}
+                --imgui.BeginGroup()
+                --imgui.PushStyleVar("ImGuiStyleVar_ItemSpacing", 1, 2)
+                
+                local mask = self:calcMask(tileset.tiles[imgi])
+    		    lg.setCanvas(canvas)
+    		    local view = {quad:getViewport()}
+                lg.draw(image, quad, view[1], view[2])
+                love.graphics.setBlendMode('alpha', 'alphamultiply') 
+                for i=0,8 do
+                	local mask_index = i + 1
 
-                if mask[mask_index] == 1 then
-                    color[4] = 0.5
+                	local tx = math.fmod(i, 3)*(tilew/3)
+                	local ty = math.floor(i/3)*(tileh/3)
+                	local tw = tilew/3
+                	local th = tileh/3
+
+                    --[[local ii = math.fmod(i, 3)
+                    local ji = math.floor(i/3)
+                    local tx = imgbtnx + (ii/maxtilew)/3
+                    local tw = tx + imgbtnw
+                    local ty = imgbtny + (ji/maxtileh)/3
+                    local th = ty + imgbtnh]]
+
+                    --[[if i > 0 and ii == 0 then
+                        imgui.NewLine()
+                    end]]
+
+                    if imgui.IsMouseDown(0) then
+                    	--print(mouse_x, mouse_y, view[1] + tx, view[2] + ty, view[1] + (tx + tw), view[2] + ty + th)
+                    	if mouse_x >= view[1] + tx and mouse_x < view[1] + tx + tw and mouse_y >= view[2] + ty and mouse_y < view[2] + ty + th then 
+                    		print("teste", i)
+                    		mask[mask_index] = 1
+                    	end
+                    elseif imgui.IsMouseDown(1) then
+                    	--print(mouse_x, mouse_y, view[1] + tx, view[2] + ty, view[1] + (tx + tw), view[2] + ty + th)
+                    	if mouse_x >= view[1] + tx and mouse_x < view[1] + tx + tw and mouse_y >= view[2] + ty and mouse_y < view[2] + ty + th then 
+                    		--print("teste", i)
+                    		mask[mask_index] = 0
+                    	end
+                    end
+
+                    local color = {1, 0, 0, 0}
+
+                    if mask[mask_index] == 1 then
+                        color[4] = 0.5
+                    end
+
+                    lg.setColor(color)
+                    lg.rectangle("fill", view[1] + tx, view[2] + ty, tilew/3, tileh/3)
+                    lg.setColor(1, 1, 1, 1)
+
+
+    		       	--imgui.Image(canvas, image:getDimensions())
+
+                    --imgui.ImageButton(image, tilew/3 * scale, tileh/3 * scale, tx, ty, tw, th, 1, 0.46*color[1], 0.23*color[2], 0.54*color[3], 1, color[1], color[2], color[3], color[4])
+
+                    --[[if imgui.IsMouseDown(0) then
+                        if (imgui.IsItemHovered("ImGuiHoveredFlags_AllowWhenBlockedByActiveItem")  ) then
+                            mask[mask_index] = 1
+                        end
+                    elseif imgui.IsMouseDown(1) then
+                        if (imgui.IsItemHovered("ImGuiHoveredFlags_AllowWhenBlockedByActiveItem")  ) then
+                            mask[mask_index] = 0
+                        end
+                    end]]
+                    
+                    --imgui.SameLine()
+
                 end
-
-                lg.setColor(color)
-                lg.rectangle("fill", view[1] + tx, view[2] + ty, tilew/3, tileh/3)
-                lg.setColor(1, 1, 1, 1)
-
-
-		       	--imgui.Image(canvas, image:getDimensions())
-
-                --imgui.ImageButton(image, tilew/3 * scale, tileh/3 * scale, tx, ty, tw, th, 1, 0.46*color[1], 0.23*color[2], 0.54*color[3], 1, color[1], color[2], color[3], color[4])
-
-                --[[if imgui.IsMouseDown(0) then
-                    if (imgui.IsItemHovered("ImGuiHoveredFlags_AllowWhenBlockedByActiveItem")  ) then
-                        mask[mask_index] = 1
-                    end
-                elseif imgui.IsMouseDown(1) then
-                    if (imgui.IsItemHovered("ImGuiHoveredFlags_AllowWhenBlockedByActiveItem")  ) then
-                        mask[mask_index] = 0
-                    end
-                end]]
+                
+                lg.rectangle("line", view[1], view[2], tilew, tileh)
+    	       	lg.setCanvas()
+                --imgui.PopStyleVar()
+                --imgui.EndGroup()
                 
                 --imgui.SameLine()
-
+                tileset.tiles[imgi] = self:calcValueFromMask(mask)
             end
-            
-            lg.rectangle("line", view[1], view[2], tilew, tileh)
-	       	lg.setCanvas()
-            --imgui.PopStyleVar()
-            --imgui.EndGroup()
-            
-            --imgui.SameLine()
-            tileset.tiles[imgi] = self:calcValueFromMask(mask)
+            local imgw, imgh = image:getDimensions()
+            --print(window_x, window_y)
+            local w = math.min(contw, conth)
+            if imgui.BeginChildFrame(123321, contw, conth) then
+                imgui.Image(canvas, imgw*scale, imgh*scale)
+                imgui.EndChildFrame()
+            end
+            imgui.EndTabItem()
         end
-        local imgw, imgh = image:getDimensions()
-        imgui.Image(canvas, imgw*scale, imgh*scale)
-        imgui.EndChild()
+
+        if imgui.BeginTabItem("Priority") then
+            imgui.EndTabItem()
+        end
+        --imgui.EndChild()
     end
+    imgui.EndTabBar()
 end
 
 function TilesetEditor:draw()

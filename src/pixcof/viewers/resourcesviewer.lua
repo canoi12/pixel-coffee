@@ -23,17 +23,25 @@ function ResourcesViewer:constructor(debug)
 	}
 
 	self.popup = {
-		tilemap = {
+		map = {
 			open = false,
-			fn = self.openMapPopup
+			fn = self.openMapPopup,
+			new = self.newMap
 		},
 		sprite = {
 			open = false,
-			fn = self.openSpritePopup
+			fn = self.openSpritePopup,
+			new = self.newSprite
 		},
 		tileset = {
 			open = false,
-			fn = self.openTilesetPopup
+			fn = self.openTilesetPopup,
+			new = self.newTileset
+		},
+		object = {
+			open = false,
+			fn = self.openObjectPopup,
+			new = self.newObject
 		}
 	}
 
@@ -88,6 +96,7 @@ function ResourcesViewer:draw()
 		if imgui.Begin("ResourcesViewer##resources_viewer_dock") then
 			--imgui.BeginChild("ResourcesViewer", 0, 0, false, "ImGuiWindowFlags_HorizontalScrollbar")
 			if imgui.SmallButton("reload") then
+				lume.hotswap("pixcof.resources")
 				resources:init()
 			end
 			self:imageMenu()
@@ -117,10 +126,10 @@ function ResourcesViewer:draw()
 			end
 
 			--imgui.EndChild()
-			imgui.End()
 		end
+		imgui.End()
 
-		if self.popup.tilemap.open then
+		--[[if self.popup.tilemap.open then
 			imgui.OpenPopup("New Map")
 		end
 
@@ -132,9 +141,24 @@ function ResourcesViewer:draw()
 			imgui.OpenPopup("New Tileset")
 		end
 
-		self:newMap()
+		if self.popup.object.open then
+			imgui.OpenPopup("New Object")
+		end]]
+
+		--[[self:newMap()
 		self:newSprite()
-		self:newTileset()
+		self:newTileset()]]
+		for k,popup in pairs(self.popup) do
+			--print(k, popup.new)
+			if popup.open then
+				local aux = k:sub(1,1)
+				local pop = k:sub(2,#k)
+				pop = aux:upper() .. pop
+				--print(pop)
+				imgui.OpenPopup("New " .. pop)
+			end
+			popup.new(self)
+		end
 
 		for k,viewer in pairs(self.viewers) do
 			if not viewer.open then
@@ -143,13 +167,14 @@ function ResourcesViewer:draw()
 			viewer:draw()
 		end
 
-		for i,script in ipairs(self.scripts) do
+		--[[for i,script in ipairs(self.scripts) do
 			local open = imgui.Begin(script.name, true, "ImGuiWindowFlags_MenuBar")
 			if open then
+				imgui.BeginTextEditor(script.name)
 				if imgui.BeginMenuBar() then
 					if imgui.BeginMenu("File") then
 						if imgui.MenuItem("Save", "Ctrl-S") then
-							local scr = imgui.TextEditorGetText(script.name)
+							local scr = imgui.TextEditorGetText()
 							--print(scr)
 							local f = io.open(script.path, "w")
 							f:write(scr)
@@ -161,13 +186,13 @@ function ResourcesViewer:draw()
 					end
 					imgui.EndMenuBar()
 				end
-				imgui.TextEditorMenu(script.name)
-				imgui.RenderTextEditor(script.name)
+				imgui.TextEditorMenu()
+				imgui.RenderTextEditor()
 			else
 				lume.remove(self.scripts, script)
 			end
 			imgui.End()
-		end
+		end]]
 		--[[imgui.NextColumn()
 		
 		if self.open then
@@ -225,6 +250,10 @@ end
 function ResourcesViewer:objectMenu()
 	if imgui.TreeNodeEx("Objects") then
 		for k,object in pairs(resources.objects) do
+			if imgui.SmallButton("x##remove_object_" .. k) then
+				resources:removeObject(k)
+			end
+			imgui.SameLine()
 			if imgui.SmallButton("..##open_object_" .. k .. "_src") then
 				self:openScript(k)
 			end
@@ -302,11 +331,11 @@ function ResourcesViewer:spriteMenu()
 end
 
 function ResourcesViewer:openMapPopup()
-	self.popup.tilemap.name = ""
-	self.popup.tilemap.width = 16
-	self.popup.tilemap.height = 16
-	self.popup.tilemap.tileset = ""
-	self.popup.tilemap.open = true
+	self.popup.map.name = ""
+	self.popup.map.width = 16
+	self.popup.map.height = 16
+	self.popup.map.tileset = ""
+	self.popup.map.open = true
 end
 
 function ResourcesViewer:openSpritePopup()
@@ -325,23 +354,30 @@ function ResourcesViewer:openTilesetPopup()
 	self.popup.tileset.open = true
 end
 
-function ResourcesViewer:newMap()
-	if imgui.BeginPopupModal("New Map", nil, {"ImGuiWindowFlags_NoMove", "ImGuiWindowFlags_NoResize", "ImGuiWindowFlags_AlwaysAutoResize"}) then
-		self.popup.tilemap.name = imgui.InputText("name", self.popup.tilemap.name, 32)
+function ResourcesViewer:openObjectPopup()
+	self.popup.object.name = ""
+	self.popup.object.superclass = ""
+	self.popup.object.open = true
+end
 
-		self.popup.tilemap.width, self.popup.tilemap.height = imgui.InputInt2("size", self.popup.tilemap.width, self.popup.tilemap.height)
+function ResourcesViewer:newMap()
+	local map = self.popup.map
+	if imgui.BeginPopupModal("New Map", nil, {"ImGuiWindowFlags_NoMove", "ImGuiWindowFlags_NoResize", "ImGuiWindowFlags_AlwaysAutoResize"}) then
+		map.name = imgui.InputText("name", map.name, 32)
+
+		map.width, map.height = imgui.InputInt2("size", map.width, map.height)
 		imgui.Separator()
 		if imgui.SmallButton("ok") or lk.isDown("return") then
-			local scene = Scene:generateTable(self.popup.tilemap)
+			local scene = Scene:generateTable(map)
 			resources:saveTilemap(scene.name, scene)
 
 			imgui.CloseCurrentPopup()
-			self.popup.tilemap.open = false
+			map.open = false
 		end
 		imgui.SameLine()
 		if imgui.SmallButton("cancel") or lk.isDown("escape") then 
 			imgui.CloseCurrentPopup() 
-			self.popup.tilemap.open = false
+			map.open = false
 		end
 		imgui.EndPopup()	
 	end
@@ -412,8 +448,37 @@ function ResourcesViewer:newTileset()
 	end
 end
 
+function ResourcesViewer:newObject()
+	local object = self.popup.object
+	if imgui.BeginPopupModal("New Object", nil, {"ImGuiWindowFlags_NoMove", "ImGuiWindowFlags_NoResize", "ImGuiWindowFlags_AlwaysAutoResize"}) then
+		object.name = imgui.InputText("name", object.name, 32)
+
+		local keys = lume.keys(resources.objects)
+		local index = lume.find(keys, object.superclass) or 1
+		index = imgui.Combo("super class##object_superclass", index, keys, #keys)
+		object.superclass = keys[index]
+
+		imgui.Separator()
+		if imgui.SmallButton("ok") or lk.isDown("return") then
+			--[[local scene = Scene:generateTable(self.popup.tilemap)
+			resources:saveTilemap(scene.name, scene)]]
+			--[[local sprite = Sprite:generateTable(self.popup.sprite)
+			resources:saveSprite(sprite.name, sprite)]]
+			resources:newObject(object.name, object.superclass)
+			imgui.CloseCurrentPopup()
+			object.open = false
+		end
+		imgui.SameLine()
+		if imgui.SmallButton("cancel") or lk.isDown("escape") then 
+			imgui.CloseCurrentPopup()
+			object.open = false
+		end
+		imgui.EndPopup()	
+	end
+end
+
 function ResourcesViewer:openScript(name)
-	local l_name = name:lower()
+	--[[local l_name = name:lower()
 	local path = "src/objects/" .. l_name .. ".lua"
 	--local f = io.open()
 	local cont = ""
@@ -427,9 +492,13 @@ function ResourcesViewer:openScript(name)
 			name = "Script_" .. name,
 			path = path
 		}
-		imgui.TextEditorSetText("Script_" .. name, cont)
+		imgui.BeginTextEditor("Script_" .. name)
+		imgui.TextEditorSetText(cont)
 		lume.push(self.scripts, script)
-	end
-end
+	end]]
+	local l_name = name:lower()
+	local path = "objects/" .. l_name .. ".lua"
+	self.debug:openFile(l_name, path)
+ end
 
 return ResourcesViewer

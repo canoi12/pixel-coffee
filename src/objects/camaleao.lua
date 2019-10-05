@@ -10,15 +10,19 @@ function Camaleao:constructor(x, y)
 	self.origin.y = self.animation.height/2
 	self.width = self.animation.width
 	self.height = self.animation.height]]
-	local spcomp = Components.SpriteComponent(self, "camaleao")
+	--[[local spcomp = Components.SpriteComponent(self, "camaleao")
 	spcomp:setOrigin("center", 18)
 	self.animation = spcomp
 	local collider = Components.BoxComponent(self)
 	collider:setBounds(7, 16, 26, 26)
-	self.body = Components.KinematicComponent(self, 100)
-	self:addComponent(spcomp)
-	self:addComponent(self.body)
-	self:addComponent(collider)
+	self.body = Components.KinematicComponent(self, 100)]]
+	self:addComponent(Components.SpriteComponent, "camaleao", "center", "center")
+	self.animation = self:getComponent("SpriteComponent")
+	self:addComponent(Components.KinematicComponent)
+	self.body = self:getComponent("KinematicComponent")
+	self:addComponent(Components.BoxComponent, 10, 16, 24, 27)
+	--self:addComponent(self.body)
+	--self:addComponent(collider)
 	-- body
 end
 
@@ -39,3 +43,4 @@ function Camaleao:update(dt)
 end
 
 return Camaleao
+

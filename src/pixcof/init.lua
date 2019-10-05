@@ -15,7 +15,14 @@ __pixcof.Scene = require("pixcof.scene")
 __pixcof.SceneManager = require("pixcof.scenemanager")
 __pixcof.Input = require("pixcof.input")
 
-__pixcof.Mode = {}
+__pixcof.Components = require("pixcof.components")
+__pixcof.Viewers = require("pixcof.viewers")
+__pixcof.Editors = require("pixcof.editors")
+__pixcof.Types = require("pixcof.types")
+
+__pixcof.Mode = {
+	Log = function(...) end
+}
 
 __pixcof.init = function(args)
 	love.window.setTitle("Pixel Coffee")

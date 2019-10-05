@@ -5,12 +5,14 @@ local SpriteComponent = Component:extend("SpriteComponent")
 
 local animation = ""
 
-function SpriteComponent:constructor(entity, sprite, speed)
+function SpriteComponent:constructor(entity, sprite, origin_vertical, origin_horizontal)
 	Component.constructor(self, entity)
-	self.sprite = Sprite(sprite, speed)
+	self.sprite = Sprite(sprite, 8)
 	self.origin = Vector2()
 	self.width = self.sprite.width or 16
 	self.height = self.sprite.height or 16
+
+	self:setOrigin(origin_vertical, origin_horizontal)
 	animation = self.sprite.currentAnimation
 end
 
@@ -38,6 +40,10 @@ function SpriteComponent:setOrigin(vertical, horizontal)
 	elseif type(horizontal) == "number" then
 		self.origin.x = horizontal
 	end
+end
+
+function SpriteComponent:setSpeed(speed)
+	self.sprite:setSpeed(speed)
 end
 
 function SpriteComponent:play(animation)

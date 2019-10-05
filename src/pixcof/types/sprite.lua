@@ -41,7 +41,7 @@ function Sprite:loadQuads()
 end
 
 function Sprite:setSpeed(speed)
-	self.initial_speed = speed or 1
+	self.initial_speed = speed or 8
 end
 
 function Sprite:setAnimation(name)

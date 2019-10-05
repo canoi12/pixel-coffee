@@ -6,12 +6,14 @@ local Dolphin = Enemy:extend("Dolphin")
 
 function Dolphin:constructor(x, y)
 	self.super.constructor(self, x, y)
-	local spcomp = SpriteComponent(self, "dolphin")
+	--[[local spcomp = SpriteComponent(self, "dolphin")
 	local collider = BoxComponent(self)
 	collider:setBounds(1, 7, 15, 16)
 	spcomp:setOrigin("center", "center")
 	self:addComponent(spcomp)
-	self:addComponent(collider)
+	self:addComponent(collider)]]
+	self:addComponent(SpriteComponent, "dolphin")
+	self:addComponent(BoxComponent, 0, 9, 16, 16)
 end
 
 return Dolphin

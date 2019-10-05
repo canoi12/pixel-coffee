@@ -21,8 +21,11 @@ function Debug:constructor()
 		--[[animation = Editors.AnimationEditor:new(),
 		tileset = Editors.TilesetEditor:new(self),]]
 		resources = Viewers.ResourcesViewer:new(self),
-		log = Viewers.LogViewer(self)
+		log = Viewers.LogViewer(self),
+		explorer = Viewers.Explorer:new(self)
 	}
+
+	self.files = {}
 
 	self:Log("Debug initialized")
 end
@@ -86,6 +89,30 @@ function Debug:draw()
 		for k,editor in pairs(editors_open) do
 			editor:draw()
 		end
+
+		for k,file in pairs(self.files) do
+			local open = imgui.Begin("File_" .. k, true, "ImGuiWindowFlags_MenuBar")
+			if open then
+				imgui.BeginTextEditor("File_" .. k)
+				if imgui.BeginMenuBar() then
+					if imgui.BeginMenu("File") then
+						if imgui.MenuItem("Save") then 
+							self:saveFile(k)
+						end
+						if imgui.MenuItem("Close") then 
+							self:closeFile(k)
+						end
+						imgui.EndMenu()
+					end
+					imgui.EndMenuBar()
+				end
+				imgui.TextEditorMenu()
+				imgui.RenderTextEditor()
+			else
+				self:closeFile(k)
+			end
+			imgui.End()
+		end
 		--imgui.ShowDemoWindow()
 		imgui.End()
 	end
@@ -133,6 +160,30 @@ function Debug:initImGui()
 		end
 	end
 	self:Log("ImGui started <3")
+end
+
+function Debug:openFile(name, path)
+	self.files[name] = "src/" .. path
+	local text = ""
+	for line in io.lines("src/" .. path) do
+		text = text .. line .. "\n"
+	end
+	imgui.BeginTextEditor("File_" .. name)
+	imgui.TextEditorSetText(text)
+end
+
+function Debug:saveFile(name)
+	if not self.files[name] then return end
+	local f = io.open(self.files[name], "w")
+	imgui.BeginTextEditor("File_" .. name)
+	local text = imgui.TextEditorGetText()
+	f:write(text)
+	f:close()
+	lume.hotswap(lume.split(self.files[name], ".")[1])
+end
+
+function Debug:closeFile(name)
+	self.files[name] = nil
 end
 
 return Debug

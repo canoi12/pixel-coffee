@@ -44,7 +44,33 @@ function Resources:init()
 
 	self:initImages()
 
+	pixcof.Log("Resources Loaded")
+
 	--print("Resources loaded")
+end
+
+function Resources:newObject(name, superclass)
+	local obj = {
+		name = name,
+		superclass = superclass,
+		superclass_l = superclass:lower(),
+		name_l = name:lower()
+	}
+	local object_path = "objects/"
+	if not love.filesystem.getInfo(object_path) then
+		lfs.mkdir("src/" .. object_path)
+	end
+	local ret = [[
+local {superclass} = require("objects.{superclass_l}")
+local {name} = {superclass}:extend("{name}")
+
+return {name}
+	]]
+
+	local f = io.open("src/" .. object_path .. name:lower() .. ".lua", "w")
+	f:write(lume.format(ret, obj))
+	f:close()
+	self:loadObject(name:lower() .. ".lua")
 end
 
 function Resources:getImage(name)
@@ -82,6 +108,10 @@ end
 function Resources:loadObject(path)
   local path = lume.split(path, ".")[1]
   local robject = require(self.objectsPath .. path)
+  --[[for line in io.lines("src/" .. self.objectsPath .. path .. ".lua") do
+  	print(line)
+  end]]
+  lume.hotswap(self.objectsPath .. path)
   self.objects[robject.__class] = robject
 end
 
@@ -260,6 +290,15 @@ function Resources:removeTilemap(name)
 	os.remove("src/" .. tilemap_path .. name .. ".lua")
 	self.tilemaps[name] = nil
 	--self:loadTilemaps()
+end
+
+function Resources:removeObject(name)
+	local object_path = "objects/"
+	if not lf.getInfo(object_path .. name:lower() .. ".lua") then
+		return
+	end
+	os.remove("src/".. object_path .. name:lower() .. ".lua")
+	self.objects[name] = nil
 end
 
 return Resources

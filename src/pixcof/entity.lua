@@ -17,8 +17,9 @@ function Entity:constructor(x, y)
 	self.centery = 0]]
 end
 
-function Entity:addComponent(component)
-	lume.push(self.components, component)
+function Entity:addComponent(component, ...)
+	local comp = component(self, ...)
+	lume.push(self.components, comp)
 end
 
 function Entity:getComponent(componentType)
